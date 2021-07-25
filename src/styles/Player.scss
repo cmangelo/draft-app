@@ -1,0 +1,83 @@
+.Player {
+    margin: 15px;
+
+    h1 {
+        font-weight: normal;
+        display: flex;
+        align-items: center;
+
+        .icon {
+            margin-right: 15px;
+        }
+
+        .name {
+            flex-grow: 1;
+        }
+
+        .position {
+            color: $ternary-font-color;
+            font-weight: lighter;
+            padding-right: 15px;
+        }
+
+        @include for-tablet-portrait-down {
+            font-size: 26px;
+
+            .name {
+                text-align: center;
+            }
+        }
+    }
+
+    h3 {
+        margin-bottom: 10px;
+        font-weight: 500;
+    }
+
+    p {
+        max-width: 100%;
+    }
+
+    .info-cells {
+        border: $default-border;
+        border-radius: 5px;
+        display: flex;
+
+        .cell {
+            padding: 7px;
+            border-right: $default-border;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            justify-content: space-between;
+            align-items: center;
+
+            .cell-header {
+                font-size: .8em;
+                font-weight: bolder;
+                color: $ternary-font-color;
+            }
+
+            .cell-data {
+                font-size: 1.2em;
+                padding-top: 4px;
+
+                &.low-risk {
+                    color: $low-risk-green;
+                }
+
+                &.medium-risk {
+                    color: $medium-risk-yellow;
+                }
+
+                &.high-risk {
+                    color: $high-risk-red;
+                }
+            }
+
+            &:last-of-type {
+                border-right: none;
+            }
+        }
+    }
+}

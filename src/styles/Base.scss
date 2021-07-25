@@ -1,0 +1,29 @@
+div::-webkit-scrollbar,
+div::-webkit-scrollbar-track {
+    display: none;
+}
+
+button {
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    outline: none;
+    padding: 6px 12px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+
+    &:hover {
+        opacity: .8;
+    }
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.ReactModalPortal {
+    svg.fa-times {
+        float: right;
+        cursor: pointer;
+        color: $secondary-font-color;
+    }
+}

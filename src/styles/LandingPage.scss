@@ -1,0 +1,58 @@
+.LandingPage {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    background: linear-gradient(to top, #FFFFFF, #edf2f7, #d6f4ff);
+
+    .images {
+        display: none;
+        width: 60vw;
+        position: relative;
+        margin: 15px;
+        margin-right: 0;
+        border-top-left-radius: 25px;
+        border-bottom-left-radius: 25px;
+
+        img {
+            &.laptop {
+                height: 100%;
+                position: absolute;
+                top: -15%;
+            }
+
+            &.phone {
+                height: 60%;
+                position: absolute;
+                top: 30%;
+                left: 55%;
+            }
+        }
+
+        .text {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 20px;
+            position: absolute;
+            text-align: right;
+            top: 68%;
+            right: 40%;
+
+            h1 {
+                margin-top: 0;
+            }
+
+            span {
+                max-width: 470px;
+                display: block;
+            }
+        }
+
+        @include for-desktop-up {
+            display: block;
+        }
+    }
+
+    .Login {
+        margin: 0 auto;
+
+    }
+}

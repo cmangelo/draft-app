@@ -1,0 +1,68 @@
+.Sidebar {
+    border-right: $default-border;
+    height: 100vh;
+    width: $sidebar-width;
+    flex-shrink: 0;
+
+    nav {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 100%;
+
+        a {
+            color: $secondary-font-color;
+            margin-bottom: 30px;
+            text-align: center;
+            text-decoration: none;
+            transition: transform ease .1s;
+
+            div {
+                font-size: 13px;
+            }
+
+            .icon {
+                font-size: 30px;
+            }
+
+            &:hover {
+                transform: translateY(-3px);
+            }
+
+            &.active {
+                color: $accent-color;
+            }
+        }
+    }
+
+    @include for-tablet-portrait-down {
+        background: white;
+        border-right: none;
+        border-top: $default-border;
+        bottom: 0;
+        height: 50px;
+        order: 1;
+        top: initial;
+        width: 100vw;
+
+        nav {
+            flex-direction: row;
+            justify-content: space-between;
+
+            a {
+                margin: 3px 20px 0;
+
+                div {
+                    font-size: 12px;
+                    line-height: 1;
+                }
+
+                .icon {
+                    font-size: 20px;
+                    margin-bottom: 3px;
+                }
+            }
+        }
+    }
+}

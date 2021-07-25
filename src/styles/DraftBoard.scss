@@ -1,0 +1,111 @@
+.DraftBoard {
+    display: flex;
+    flex-direction: row;
+    overflow: auto;
+    margin-bottom: 15px;
+    margin-top: 15px;
+    max-height: 100%;
+    -webkit-overflow-scrolling: auto;
+    width: 100vw;
+
+    @media only screen and (min-width: 1380px) {
+        justify-content: center;
+        width: auto;
+    }
+
+    .team-column {
+        display: flex;
+        flex-direction: column;
+
+        &:first-of-type {
+            padding-left: 15px;
+        }
+
+        &:last-of-type {
+            padding-right: 15px;
+        }
+
+        .draft-pick-card {
+            margin: 3px;
+            background-color: #ececec;
+            border-radius: 4px;
+            height: 60px;
+            width: 90px;
+            color: white;
+            padding: 2px 5px;
+
+
+            .top {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 11px;
+                margin: 3px 0 5px;
+
+                .round-pick {
+                    font-weight: bolder;
+                    color: #7d7d7d;
+                    opacity: .8;
+                }
+            }
+
+            .bottom {
+                display: flex;
+                justify-content: space-between;
+                align-items: baseline;
+                font-size: 13px;
+                margin-top: 5px;
+
+                .name {
+                    line-height: 1;
+                    width: 75px;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    overflow-x: hidden;
+                    display: flex;
+                    flex-direction: column;
+
+                    .last-name {
+                        font-weight: 600;
+                        padding-bottom: 3px;
+                    }
+                }
+            }
+
+            &.QB {
+                background-color: $qb;
+            }
+
+            &.RB {
+                background-color: $rb;
+            }
+
+            &.WR {
+                background-color: $wr;
+            }
+
+            &.TE {
+                background-color: $te;
+            }
+
+            &.DST {
+                background-color: $defense;
+            }
+
+            &.K {
+                background-color: $kicker;
+            }
+
+            &.QB,
+            &.RB,
+            &.WR,
+            &.TE,
+            &.DST,
+            &.K {
+                .round-pick {
+                    color: #fff;
+                }
+            }
+        }
+    }
+}

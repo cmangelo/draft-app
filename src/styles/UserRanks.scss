@@ -1,0 +1,26 @@
+.UserRanks {
+    display: flex;
+
+    .ranks {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+
+        .Group {
+            border: none;
+            max-height: calc(100vh - 58px);
+
+            @include for-tablet-portrait-down {
+                max-height: calc(100vh - 111px);
+            }
+        }
+    }
+
+    .player-card {
+        flex: 1.5;
+        margin: 10px;
+        padding: 0 15px;
+        border: $default-border;
+        border-radius: 5px;
+    }
+}

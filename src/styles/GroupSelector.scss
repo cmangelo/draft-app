@@ -1,0 +1,45 @@
+.GroupSelector {
+    display: flex;
+    padding: 10px 5px;
+    background: white;
+
+    >div {
+        flex-grow: 1;
+
+        input {
+            display: none;
+
+            &:checked+label {
+                background-color: $light-grey;
+            }
+        }
+
+        label {
+            -webkit-appearance: none;
+            display: block;
+            font-size: 14px;
+            line-height: 1;
+            text-align: center;
+            padding: 11px;
+            border: 1px solid #d9d9d9;
+            border-right: none;
+            cursor: pointer;
+
+        }
+
+        &:first-of-type {
+            label {
+                border-top-left-radius: 3px;
+                border-bottom-left-radius: 3px;
+            }
+        }
+
+        &:last-of-type {
+            label {
+                border-right: 1px solid #d9d9d9;
+                border-top-right-radius: 3px;
+                border-bottom-right-radius: 3px;
+            }
+        }
+    }
+}

@@ -1,0 +1,87 @@
+@import './Variables.scss';
+
+.Login {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    height: 85vh;
+
+    img {
+        max-height: 200px;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        padding: 0 20px 10px 20px;
+        margin: 0 auto;
+
+        input {
+            margin-top: 10px;
+            -webkit-appearance: none;
+            font-size: 16px;
+            padding: 8px;
+            border: $darker-border;
+            border-radius: 5px;
+            min-width: 270px;
+
+            &:-webkit-autofill::first-line {
+                font-size: 16px
+            }
+        }
+
+        button {
+            font-size: 16px;
+            background-color: #27d086;
+            color: white;
+            margin-top: 5px;
+            border-radius: 5px;
+            align-self: flex-end;
+            width: 40%;
+            padding: 10px 0;
+            box-shadow:
+                0 0.5px 0.6px -8px rgba(0, 0, 0, 0.038),
+                0 1.5px 1.8px -8px rgba(0, 0, 0, 0.055),
+                0 3.6px 4.2px -8px rgba(0, 0, 0, 0.072),
+                0 12px 14px -8px rgba(0, 0, 0, 0.11);
+
+        }
+    }
+
+
+    .toggle {
+        padding-left: 20px;
+        margin-top: 40px;
+
+        span {
+            margin-right: 10px;
+            font-size: 18px;
+            cursor: pointer;
+
+            &.active {
+                font-weight: bold;
+            }
+
+            &:hover {
+                font-weight: 500;
+            }
+        }
+    }
+
+    p {
+        font-size: 14px;
+        text-align: center;
+        margin: 0;
+        cursor: pointer;
+
+        &:hover {
+            color: #41ccb8;
+        }
+    }
+
+    .error-message {
+        color: red;
+        font-size: 12px;
+        height: 16px;
+    }
+}

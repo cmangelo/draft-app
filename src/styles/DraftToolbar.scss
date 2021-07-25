@@ -1,0 +1,87 @@
+.DraftToolbar {
+    border-bottom: $default-border;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 15px;
+    min-height: 49px;
+
+    @include for-phone-only {
+        flex-direction: column;
+    }
+
+    .numbers {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        margin-top: 3px;
+
+        .inner {
+            align-items: center;
+            display: flex;
+        }
+
+        p {
+            font-size: 28px;
+            margin: 0;
+            margin-right: 20px;
+
+            span {
+                font-size: 22px;
+                font-weight: lighter;
+            }
+        }
+
+        .icon {
+            display: none;
+            font-size: 20px;
+            margin-top: 5px;
+            transition: transform ease-in .1s;
+
+            &.flip {
+                transform: rotate(180deg);
+            }
+
+            @include for-phone-only {
+                display: block;
+            }
+        }
+    }
+
+    .buttons {
+        align-items: center;
+        display: flex;
+        overflow: hidden;
+        transition: height ease-in .2s;
+
+        @include for-phone-only {
+            height: 45px;
+            padding: 5px 0;
+
+            &.closed {
+                height: 0;
+                padding: 0;
+            }
+        }
+
+        button {
+            border-radius: 25px;
+            color: #fff;
+            flex-grow: 1;
+            font-size: 15px;
+            margin-left: 10px;
+            padding: 10px 15px;
+
+            &.kicker {
+                background-color: $kicker;
+            }
+
+            &.defense {
+                background-color: $defense;
+            }
+
+            &:first-of-type {
+                margin-left: 0;
+            }
+        }
+    }
+}

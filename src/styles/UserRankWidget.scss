@@ -1,0 +1,28 @@
+.UserRankWidget {
+    display: flex;
+    align-items: center;
+
+    svg {
+        cursor: pointer;
+        transition: scale ease-in .1s;
+
+        &:hover {
+            transform: scale(1.1, 1.1)
+        }
+    }
+
+    .all-in {
+        color: $all-in-green;
+        margin-left: 0;
+    }
+
+    .neutral {
+        color: $neutral-yellow;
+        margin-left: 7px;
+    }
+
+    .all-out {
+        color: $all-out-red;
+        margin-left: 7px;
+    }
+}

@@ -1,0 +1,92 @@
+@import './Variables.scss';
+
+.CreateDraft {
+    max-width: 550px;
+    margin: 0 auto;
+
+    h1 {
+        font-weight: lighter;
+        margin-left: 15px;
+        margin-bottom: 0;
+    }
+
+    .button-container {
+        padding: 0 15px;
+    }
+
+    button {
+        color: white;
+        width: 100%;
+        border-radius: 30px;
+        padding: 10px;
+        font-size: 1.1em;
+        background-color: $secondary-color;
+
+        &:hover {
+            background-color: $dark-button-hover;
+        }
+    }
+
+    .card {
+        border: $default-border;
+        border-radius: 5px;
+        padding: 15px;
+        margin: 15px;
+
+        @include for-tablet-portrait-down {
+            border: none;
+        }
+
+        .draft-option {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            align-items: center;
+
+            .name {
+                flex: 1;
+            }
+
+            .incrementer {
+                border: $default-border;
+                border-radius: 5px;
+                display: flex;
+                align-items: center;
+                height: 40px;
+                overflow: hidden;
+
+                >div {
+                    font-size: 2em;
+                    font-weight: bold;
+                    width: 45px;
+                    text-align: center;
+                    height: auto;
+                    background-color: $light-grey;
+                    padding-bottom: 6px;
+                    cursor: pointer;
+
+                    &:hover {
+                        background-color: $medium-grey;
+                    }
+                }
+
+                input {
+                    border: none;
+                    height: calc(100% - 2px);
+                    width: 45px;
+                    border-left: $default-border;
+                    border-right: $default-border;
+                    -webkit-appearance: none;
+                    font-size: 1.2em;
+                    text-align: center;
+
+                    &::-webkit-outer-spin-button,
+                    &::-webkit-inner-spin-button {
+                        -webkit-appearance: none;
+                        margin: 0;
+                    }
+                }
+            }
+        }
+    }
+}

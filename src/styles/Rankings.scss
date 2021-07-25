@@ -1,0 +1,25 @@
+@import './Variables.scss';
+
+.Rankings {
+
+    .ranks {
+        display: flex;
+        flex-direction: column;
+        max-height: calc(100vh - 50px);
+
+        @include for-tablet-portrait-down {
+            max-height: calc(100vh - 102px);
+        }
+
+        .Group {
+            width: 100%;
+        }
+
+        .groups {
+            display: flex;
+            margin: 3px 0;
+            max-height: 100%;
+            overflow: auto;
+        }
+    }
+}
