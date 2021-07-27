@@ -39,25 +39,6 @@ export const teamsWithPicksSelector = createSelector(
         [currTeam]: currPicks
       }
     }, {} as TeamsWithPicks)
-
-    // return Object.keys(picks).reduce((acc, key) => {
-    //   const overall = parseInt(key, 10)
-    //   const currTeam = getCurrTeam(overall, numDrafters)
-    //   const currPicks = acc[currTeam] || new Array(numRounds).fill(null)
-    //   const pick: DraftPick = {
-    //     overall,
-    //     roundPick: getCurrRoundPick(overall, numDrafters),
-    //     round: getNewRound(overall, numDrafters),
-    //     player: players[picks[overall]],
-    //   }
-    //   const round = getNewRound(overall, numDrafters) - 1
-    //   currPicks[round] = pick
-    //   currPicks.sort((a: DraftPick, b: DraftPick) => a.overall - b.overall)
-    //   return {
-    //     ...acc,
-    //     [currTeam]: currPicks
-    //   }
-    // }, {} as TeamsWithPicks)
   }
 )
 

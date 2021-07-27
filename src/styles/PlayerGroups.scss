@@ -12,6 +12,10 @@
         padding-bottom: 5px;
     }
 
+    .hide-tier {
+        display: none;
+    }
+
     .tier-header {
         background: white;
         padding-bottom: 5px;
@@ -126,6 +130,10 @@
             button {
                 background-color: $medium-grey;
                 opacity: 1;
+            }
+
+            &.hide-drafted {
+                display: none;
             }
         }
 

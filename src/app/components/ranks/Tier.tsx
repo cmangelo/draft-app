@@ -6,12 +6,14 @@ type TierProps = {
   tier: PopulatedTier
   playerPosition: PlayerPosition
   draftPlayer: (draftId: string) => void
+  hideDraftedPlayers: boolean
 }
 
 export const Tier: FC<TierProps> = ({
   tier,
   draftPlayer,
-  playerPosition
+  playerPosition,
+  hideDraftedPlayers
 }) => {
 
   const listPlayers = () => {
@@ -22,13 +24,16 @@ export const Tier: FC<TierProps> = ({
           player={player}
           draftPlayer={draftPlayer}
           playerPosition={playerPosition}
+          hideDraftedPlayers={hideDraftedPlayers}
         />
       )
     })
   }
 
+  const allPlayersDrafted = () => tier.players.every((player) => player.drafted)
+
   return (
-    <div>
+    <div className={hideDraftedPlayers && allPlayersDrafted() ? 'hide-tier' : ''}>
       <div className={"tier-header"} > 
       {/* (allPlayersInTierDrafted(tier))}> */}
         <div className="tier-number">

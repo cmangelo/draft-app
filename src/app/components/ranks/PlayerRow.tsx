@@ -5,6 +5,7 @@ import { UserRankWidget } from './UserRankWidget'
 type PlayerRowProps = {
   player: Player
   playerPosition: PlayerPosition
+  hideDraftedPlayers: boolean
   draftPlayer?: (playerId: string) => void
   rankPlayer?: (playerId: string, rank: UserRanking) => void
 }
@@ -13,7 +14,8 @@ export const PlayerRow: FC<PlayerRowProps> = ({
   player,
   playerPosition,
   draftPlayer,
-  rankPlayer
+  rankPlayer,
+  hideDraftedPlayers
 }) => {
 
   const handleDraftButtonClick = ($event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -41,7 +43,12 @@ export const PlayerRow: FC<PlayerRowProps> = ({
 }
 
   return (
-    <div className={`player-row ${!!draftPlayer && player.drafted ? 'drafted' : ''}`}
+    <div className={`
+      player-row 
+      ${!!draftPlayer && player.drafted ? 'drafted' : ''}
+      ${hideDraftedPlayers ? 'hide-drafted' : ''}
+      `}
+    hidden={player.drafted}
     // (!!props.selectPlayer ? "clickable " : "") +
     // (!!props.selectPlayer && props.selected ? "selected" : "")}
     // onClick={selectPlayer}

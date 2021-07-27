@@ -22,16 +22,11 @@ export const Rankings: FC<RankingsProps> = ({
           key={positionRanks[0].playerPosition}
           ranks={positionRanks}
           position={positionRanks[0].playerPosition} 
-          draftPlayer={draftPlayer} />
+          draftPlayer={draftPlayer} 
+          hideDraftedPlayers 
+         />
       )
     })
-  
-    // if (!this.props.groupsWithPlayers) return;
-    // return this.props.groupsWithPlayers.map((group: IGroup) => {
-    //     return (
-    //         <PlayerGroup group={group} draftPlayer={this.props.draftPlayer} key={group._id} selectPlayer={(playerId: string) => this.playerSelected(playerId)}></PlayerGroup>
-    //     );
-    // });
   }
 
   return (

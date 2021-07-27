@@ -26,6 +26,7 @@ export const DraftToolbar: FC<DraftToolbarProps> = ({
         </div>
         <FontAwesomeIcon icon="chevron-down" className={`icon ${!dropdownClosed ? 'flip' : ''}`} />
       </div>
+      {/* TODO: toggle to hide/show drafted players */}
         {/* <div className={`buttons ${dropdownClosed ? 'closed' : ''}`}>
             <button className="defense" onClick={draftDefense}>Draft Defense</button>
             <button className="kicker" onClick={draftKicker}>Draft Kicker</button>
