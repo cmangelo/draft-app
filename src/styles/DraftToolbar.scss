@@ -1,5 +1,6 @@
 .DraftToolbar {
     border-bottom: $default-border;
+    border-top: $default-border;
     display: flex;
     justify-content: space-between;
     padding: 0 15px;
@@ -31,16 +32,22 @@
             }
         }
 
+    }
+
+    .icon-container {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+
         .icon {
-            display: none;
-            font-size: 20px;
+            font-size: 25px;
             margin-top: 5px;
             transition: transform ease-in .1s;
-
-            &.flip {
+    
+            &.down {
                 transform: rotate(180deg);
             }
-
+    
             @include for-phone-only {
                 display: block;
             }

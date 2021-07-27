@@ -1,0 +1,42 @@
+.DraftArena {
+  height: 100vh;
+  position: relative;
+  // display: grid;
+  // grid-template-rows: 50% 50%;
+
+  &.full-screen-ranks {
+    // >.board-container {
+    //   height: 0;
+    // }
+
+    >.ranks-container {
+      height: 100%;
+    }
+  }
+
+  &.full-screen-board {
+    >.board-container {
+      height: calc(100% - 50px);
+    }
+
+    >.ranks-container {
+      height: 50px;
+    }
+  }
+
+  .board-container {
+    height: 50%;
+    overflow: auto;
+  }
+
+  .ranks-container {
+    bottom: 0;
+    z-index: 10;
+    background: white;
+    width: 100%;
+    overflow: hidden;
+    position: absolute;
+    height: 50%;
+    transition: all 0.2s ease;
+  }
+}

@@ -1,11 +1,12 @@
 @import './Variables.scss';
 
 .Rankings {
+    height: calc(100% - 50px);
 
     .ranks {
         display: flex;
         flex-direction: column;
-        max-height: calc(100vh - 50px);
+        max-height: 100%;//calc(100vh - 50px);
 
         @include for-tablet-portrait-down {
             max-height: calc(100vh - 102px);
