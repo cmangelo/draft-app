@@ -12,6 +12,7 @@ export type PlayerCount = {
   wideReceiver: number
   tightEnd: number
   flex: number
+  superflex: number
   defense: number
   kicker: number
   bench: number

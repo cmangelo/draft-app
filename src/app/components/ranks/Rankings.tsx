@@ -9,6 +9,7 @@ type RankingsProps = {
   draftPlayer?: (playerId: string) => void
   queuePlayer?: (playerId: string) => void
   dequeuePlayer?: (playerId: string) => void
+  updateQueueOrder?: (oldIndex: number, newIndex: number) => void
 }
 
 export const Rankings: FC<RankingsProps> = ({
@@ -16,7 +17,8 @@ export const Rankings: FC<RankingsProps> = ({
   playerQueue,
   draftPlayer,
   queuePlayer,
-  dequeuePlayer
+  dequeuePlayer,
+  updateQueueOrder
 }) => { 
 
   const renderGroups = () => {
@@ -50,6 +52,7 @@ export const Rankings: FC<RankingsProps> = ({
                 draftPlayer={draftPlayer}
                 queuePlayer={queuePlayer}
                 dequeuePlayer={dequeuePlayer}
+                updateQueueOrder={updateQueueOrder}
               />
           }
         </div>

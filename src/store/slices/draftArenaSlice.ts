@@ -1,7 +1,8 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AxiosResponse } from 'axios'
-import { draftPlayer, getDraftDetails, getDrafts, getRanks } from '../../clients/proxyClient'
-import { DraftConfig, DraftOrder, DraftPicks, UserDraft } from '../../models/draft'
+import { push } from 'connected-react-router'
+import { createDraft, draftPlayer, getDraftDetails, getDrafts, getRanks } from '../../clients/proxyClient'
+import { CreateDraftRequest, DraftConfig, DraftOrder, DraftPicks, UserDraft } from '../../models/draft'
 import { Player, RankingsVersions } from '../../models/player'
 
 export type PickState = {
@@ -60,6 +61,15 @@ export const loadDraftThunk = createAsyncThunk(
   }
 )
 
+export const createDraftThunk = createAsyncThunk(
+  'createDraft',
+  async (draftConfig: CreateDraftRequest, { dispatch }) => {
+    const response = await createDraft(draftConfig)
+    const draftId = response.data.draftId
+    dispatch(push(`/drafts/${draftId}`))
+  }
+)
+
 export const getRanksThunk = createAsyncThunk(
   'getRanks',
   async(rankingsVersions?: RankingsVersions) => {
@@ -101,13 +111,18 @@ export const draftArenaSlice = createSlice({
   name: 'draft',
   initialState,
   reducers: {
-    queuePlayer: (state, action) => {
+    queuePlayer: (state, action: PayloadAction<string>) => {
       const playerId = action.payload
       state.queue.push(playerId)
     },
-    dequeuePlayer: (state, action) => {
+    dequeuePlayer: (state, action: PayloadAction<string>) => {
       const playerId = action.payload
       removePlayerFromQueue(state, playerId)
+    },
+    updateQueueOrder: (state, action: PayloadAction<{ newIndex: number, oldIndex: number }>) => {
+      const { oldIndex, newIndex } = action.payload
+      const [removed] = state.queue.splice(oldIndex, 1)
+      state.queue.splice(newIndex, 0, removed)
     },
     unloadDraft: (state) => initialState
   },
@@ -158,6 +173,7 @@ export const draftArenaSlice = createSlice({
 export const {
   queuePlayer,
   dequeuePlayer,
+  updateQueueOrder,
   unloadDraft
 } = draftArenaSlice.actions
 

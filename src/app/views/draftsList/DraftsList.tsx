@@ -1,13 +1,15 @@
 import { FC, useEffect } from 'react'
 import moment from 'moment'
-import { UserDraft } from '../../models/draft'
-import { getDraftsThunk } from '../../store/slices/draftArenaSlice'
-import { useAppDispatch, useAppSelector } from '../../store/hooks'
-import { populatedQbTierSelector } from '../../store/selectors/entitySelector'
-import { draftsSelector } from '../../store/selectors/draftArenaSelector'
+import { useHistory } from 'react-router-dom'
+import { UserDraft } from '../../../models/draft'
+import { getDraftsThunk } from '../../../store/slices/draftArenaSlice'
+import { useAppDispatch, useAppSelector } from '../../../store/hooks'
+import { populatedQbTierSelector } from '../../../store/selectors/entitySelector'
+import { draftsSelector } from '../../../store/selectors/draftArenaSelector'
 
 export const DraftsList: FC = () => {
   const dispatch = useAppDispatch()
+  const history = useHistory()
 
   const drafts = useAppSelector(state => draftsSelector(state))
   const qbs = useAppSelector(state => populatedQbTierSelector(state))
@@ -18,11 +20,11 @@ export const DraftsList: FC = () => {
   }, [dispatch])
 
   const goToDraft = (draftId: string) => {
-    console.log('todo')
+    history.push(`/drafts/${draftId}`)
   }
 
   const createDraft = () => {
-    console.log('create draft')
+    history.push('/drafts/create')
   }
 
   const renderDraftsList = () => {
@@ -45,19 +47,19 @@ export const DraftsList: FC = () => {
 
   return (
     <div className="DraftsList">
-    <div>
-      <h1>My Drafts</h1>
-      <div className="list">
-        {drafts && drafts.length
-          ? renderDraftsList()
-          : (
-            <div className="no-drafts">
-              <p>You haven't started any drafts.</p>
-              <button onClick={createDraft}>Create a Draft</button>
-            </div>
-          )
-        }
-        </div>
+      <div>
+        <h1>My Drafts</h1>
+        <button onClick={createDraft}>Create a Draft</button>
+        <div className="list">
+          {drafts && drafts.length
+            ? renderDraftsList()
+            : (
+              <div className="no-drafts">
+                <p>You haven't started any drafts.</p>
+              </div>
+            )
+          }
+          </div>
       </div>
     </div>
   )
