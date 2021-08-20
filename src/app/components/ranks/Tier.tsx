@@ -5,7 +5,9 @@ import { PlayerRow } from './PlayerRow'
 type TierProps = {
   tier: PopulatedTier
   playerPosition: PlayerPosition
-  draftPlayer: (draftId: string) => void
+  draftPlayer?: (playerId: string) => void
+  queuePlayer?: (playerId: string) => void
+  dequeuePlayer?: (playerId: string) => void
   hideDraftedPlayers: boolean
 }
 
@@ -13,7 +15,9 @@ export const Tier: FC<TierProps> = ({
   tier,
   draftPlayer,
   playerPosition,
-  hideDraftedPlayers
+  hideDraftedPlayers,
+  queuePlayer,
+  dequeuePlayer
 }) => {
 
   const listPlayers = () => {
@@ -23,8 +27,9 @@ export const Tier: FC<TierProps> = ({
           key={player.key}
           player={player}
           draftPlayer={draftPlayer}
-          playerPosition={playerPosition}
           hideDraftedPlayers={hideDraftedPlayers}
+          queuePlayer={queuePlayer}
+          dequeuePlayer={dequeuePlayer}
         />
       )
     })
@@ -34,8 +39,7 @@ export const Tier: FC<TierProps> = ({
 
   return (
     <div className={hideDraftedPlayers && allPlayersDrafted() ? 'hide-tier' : ''}>
-      <div className={"tier-header"} > 
-      {/* (allPlayersInTierDrafted(tier))}> */}
+      <div className="tier-header"> 
         <div className="tier-number">
           {
             tier.playerPosition === PlayerPosition.FLEX ?

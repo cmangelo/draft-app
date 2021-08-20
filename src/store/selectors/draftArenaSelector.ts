@@ -10,12 +10,13 @@ export const draftConfigSelector = createSelector(draftArenaSelector, (draftStat
 export const pickStateSelector = createSelector(draftArenaSelector, (draftState) => draftState.pickState)
 export const teamsSelector = createSelector(draftArenaSelector, (draftState) => draftState.teams)
 export const picksSelector = createSelector(draftArenaSelector, (draftState) => draftState.picks)
+export const queueSelector = createSelector(draftArenaSelector, (draftState) => draftState.queue)
 export const teamsWithPicksSelector = createSelector(
   picksSelector,
   draftConfigSelector,
   playerSelector,
-  (picks, draftConfig, players) => {
-    if (!draftConfig) return {}
+  (picks, draftConfig, players): TeamsWithPicks => {
+    if (!draftConfig || !players || !picks) return {}
 
     const numDrafters = draftConfig?.numDrafters ?? 1
     const numRounds = getNumRounds(draftConfig?.playerCount as PlayerCount)
@@ -29,7 +30,10 @@ export const teamsWithPicksSelector = createSelector(
         overall,
         roundPick: getCurrRoundPick(overall, numDrafters),
         round: getNewRound(overall, numDrafters),
-        player: players[picks[overall]],
+        player: players[picks[overall]] ? {
+          ...players[picks[overall]],
+          drafted: true
+        } : undefined,
       }
       const round = getNewRound(overall, numDrafters) - 1
       currPicks[round] = pick
@@ -46,3 +50,19 @@ const getNumRounds = (playerCount: PlayerCount) =>
   Object.keys(playerCount).reduce((acc, key) => 
     acc + playerCount[key as keyof PlayerCount]
   , 0)
+
+
+export const populatedQueueSelector = createSelector(
+  playerSelector,
+  queueSelector,
+  (players, queuedPlayers) => {
+    if (!players || !queuedPlayers) {
+      return []
+    }
+
+    return queuedPlayers.map((player: string) => ({
+      ...players[player],
+      queued: true
+    }))
+  }
+)

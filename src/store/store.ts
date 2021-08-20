@@ -1,6 +1,6 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit'
 import draftArenaSlice from '../store/slices/draftArenaSlice'
-import entitySlice from './slices/entitySlice';
+import entitySlice from './slices/entitySlice'
 
 export const store = configureStore({
   reducer: {

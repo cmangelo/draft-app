@@ -1,24 +1,22 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { KeyedMap, NumberedMap } from '../../models/common'
 import { Player, Tier } from '../../models/player'
-import { draftPlayerThunk, loadDraftThunk } from './draftArenaSlice'
+import { dequeuePlayer, draftPlayerThunk, getRanksThunk, loadDraftThunk, queuePlayer } from './draftArenaSlice'
 
 type EntityState = {
-  players: KeyedMap<Player>
-  qbTiers: NumberedMap<Tier>,
-  rbTiers: NumberedMap<Tier>,
-  wrTiers: NumberedMap<Tier>,
-  teTiers: NumberedMap<Tier>,
-  flexRanks: NumberedMap<Tier>,
+  players?: KeyedMap<Player>
+  qbTiers?: NumberedMap<Tier>,
+  rbTiers?: NumberedMap<Tier>,
+  wrTiers?: NumberedMap<Tier>,
+  teTiers?: NumberedMap<Tier>,
+  flexRanks?: NumberedMap<Tier>,
+  draftedPlayers: KeyedMap<boolean>,
+  queuedPlayers: KeyedMap<boolean>,
 }
 
 const initialState: EntityState = {
-  players: {},
-  qbTiers: {},
-  rbTiers: {},
-  wrTiers: {},
-  teTiers: {},
-  flexRanks: {},
+  draftedPlayers: {},
+  queuedPlayers: {},
 }
 
 const buildTiers = (players: Player[]) => {
@@ -47,14 +45,13 @@ export const entitySlice = createSlice({
   reducers: {},
   extraReducers: reducer => 
     reducer
-      .addCase(loadDraftThunk.fulfilled, (state, action) => {
+      .addCase(getRanksThunk.fulfilled, (state, action) => {
         const {
           qbRanks,
           rbRanks,
           wrRanks,
           teRanks,
-          flexRanks,
-          draftDetails
+          flexRanks
         } = action.payload
 
         const { playerMap: qbPlayerMap, tierMap: qbTierMap } = buildTiers(qbRanks)
@@ -74,17 +71,27 @@ export const entitySlice = createSlice({
         state.wrTiers = wrTierMap
         state.teTiers = teTierMap
         state.flexRanks = flexTierMap
-
-        const { picks } = draftDetails
-        const draftedPlayers = new Set<string>()
-        Object.values(picks).forEach(pick => draftedPlayers.add(pick))
-        draftedPlayers.forEach(draftedPlayer => {
-          state.players[draftedPlayer].drafted = true
-        })
       })
       .addCase(draftPlayerThunk.pending, (state, action) => {
         const playerId = action.meta.arg
-        state.players[playerId].drafted = true
+        state.draftedPlayers[playerId] = true
+        delete state.queuedPlayers[playerId]
+      })
+      .addCase(loadDraftThunk.fulfilled, (state, action) => {
+        const { draftDetails } = action.payload
+        const picks = draftDetails.picks
+        Object.keys(picks).forEach(key => {
+          const pickNumber = parseInt(key)
+          state.draftedPlayers[picks[pickNumber]] = true
+        })
+      })
+      .addCase(queuePlayer, (state, action) => {  
+        const playerId = action.payload
+        state.queuedPlayers[playerId] = true
+      })
+      .addCase(dequeuePlayer, (state, action) => {
+        const playerId = action.payload
+        delete state.queuedPlayers[playerId]
       })
 })
 

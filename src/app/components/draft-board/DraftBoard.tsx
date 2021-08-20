@@ -22,7 +22,7 @@ export const DraftBoard: FC<DraftBoardProps> = ({
   }
 
   const renderColumn = (teamPicks: DraftPick[]) => {
-    return teamPicks.map((pick: DraftPick, ind: number) => {
+    return teamPicks.map((pick: DraftPick) => {
       const { player, roundPick, round } = pick
 
       return <DraftPickCard 

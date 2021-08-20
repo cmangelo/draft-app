@@ -23,4 +23,23 @@
             overflow: auto;
         }
     }
+
+    .PlayerQueue {
+        h3 {
+            margin: 0;
+            margin-top: 5px;
+            font-weight: 300;
+        }
+
+        .empty-queue {
+            display: flex;
+            justify-content: center;
+            margin-top: 150px;
+
+            h4 {
+            color: #ababab;
+            font-weight: normal;
+            }
+        }
+    }
 }

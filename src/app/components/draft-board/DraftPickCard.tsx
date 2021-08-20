@@ -2,7 +2,7 @@ import { FC } from 'react'
 import { Player } from '../../../models/player'
 
 type DraftPickCardProps = {
-  player: Player
+  player?: Player
   round: number
   roundPick: number
 }

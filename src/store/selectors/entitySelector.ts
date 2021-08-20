@@ -11,45 +11,65 @@ const rbTierSelector = createSelector(entityStateSelector, state => state.rbTier
 const wrTierSelector = createSelector(entityStateSelector, state => state.wrTiers)
 const teTierSelector = createSelector(entityStateSelector, state => state.teTiers)
 const flexTierSelector = createSelector(entityStateSelector, state => state.flexRanks)
+const draftedPlayersSelector = createSelector(entityStateSelector, state => state.draftedPlayers)
+const queuedPlayersSelector = createSelector(entityStateSelector, state => state.queuedPlayers)
 
 const populateTiers = (
-  players: KeyedMap<Player>, 
-  tiers: NumberedMap<Tier>, 
-  playerPosition: PlayerPosition
-) => Object.keys(tiers).map(tier => {
-  const tierNumber = parseInt(tier)
+  playerPosition: PlayerPosition,
+  draftedPlayers: KeyedMap<boolean>,
+  queuedPlayers: KeyedMap<boolean>,
+  players?: KeyedMap<Player>, 
+  tiers?: NumberedMap<Tier>, 
+) => !players || !tiers 
+  ? [] 
+  : Object.keys(tiers).map(tier => {
+    const tierNumber = parseInt(tier)
 
-  return {
-    players: tiers[tierNumber].players.map(player => players[player]),
-    playerPosition,
-    tierNumber
-  } as PopulatedTier
-})
+    return {
+      players: tiers[tierNumber].players.map(player => ({
+        ...players[player], 
+        drafted: draftedPlayers[player],
+        queued: queuedPlayers[player],
+      })),
+      playerPosition,
+      tierNumber
+    } as PopulatedTier
+  })
 
 export const populatedQbTierSelector = createSelector(
   playerSelector,
   qbTierSelector,
-  (players, tiers) => populateTiers(players, tiers, PlayerPosition.QB)
+  draftedPlayersSelector,
+  queuedPlayersSelector,
+  (players, tiers, draftedPlayers, queuedPlayers) => populateTiers(PlayerPosition.QB, draftedPlayers, queuedPlayers, players, tiers)
 )
 export const populatedRbTierSelector = createSelector(
   playerSelector,
   rbTierSelector,
-  (players, tiers) => populateTiers(players, tiers, PlayerPosition.RB)
+  draftedPlayersSelector,
+  queuedPlayersSelector,
+  (players, tiers, draftedPlayers, queuedPlayers) => populateTiers(PlayerPosition.RB, draftedPlayers, queuedPlayers, players, tiers)
 )
 export const populatedWrTierSelector = createSelector(
   playerSelector,
   wrTierSelector,
-  (players, tiers) => populateTiers(players, tiers, PlayerPosition.WR)
+  draftedPlayersSelector,
+  queuedPlayersSelector,
+  (players, tiers, draftedPlayers, queuedPlayers) => populateTiers(PlayerPosition.WR, draftedPlayers, queuedPlayers, players, tiers)
 )
 export const populatedTeTierSelector = createSelector(
   playerSelector,
   teTierSelector,
-  (players, tiers) => populateTiers(players, tiers, PlayerPosition.TE)
+  draftedPlayersSelector,
+  queuedPlayersSelector,
+  (players, tiers, draftedPlayers, queuedPlayers) => populateTiers(PlayerPosition.TE, draftedPlayers, queuedPlayers, players, tiers)
 )
 export const populatedFlexTierSelector = createSelector(
   playerSelector,
   flexTierSelector,
-  (players, tiers) => populateTiers(players, tiers, PlayerPosition.FLEX)
+  draftedPlayersSelector,
+  queuedPlayersSelector,
+  (players, tiers, draftedPlayers, queuedPlayers) => populateTiers(PlayerPosition.FLEX, draftedPlayers, queuedPlayers, players, tiers)
 )
 
 export const populatedTierSelector = createSelector(
@@ -57,8 +77,8 @@ export const populatedTierSelector = createSelector(
   populatedRbTierSelector,
   populatedWrTierSelector,
   populatedTeTierSelector,
-  populatedFlexTierSelector,
-  (qbTiers, rbTiers, wrTiers, teTiers, flexTiers) => ({
+  // populatedFlexTierSelector,
+  (qbTiers, rbTiers, wrTiers, teTiers) => ({
     qbTiers,
     rbTiers,
     wrTiers,
@@ -66,3 +86,4 @@ export const populatedTierSelector = createSelector(
     // flexTiers
   })
 )
+

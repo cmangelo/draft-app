@@ -1,37 +1,56 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FC } from 'react'
-import { Player, PlayerPosition, UserRanking } from '../../../models/player'
+import { Player, UserRanking } from '../../../models/player'
 import { UserRankWidget } from './UserRankWidget'
 
 type PlayerRowProps = {
   player: Player
-  playerPosition: PlayerPosition
-  hideDraftedPlayers: boolean
+  hideDraftedPlayers?: boolean
   draftPlayer?: (playerId: string) => void
   rankPlayer?: (playerId: string, rank: UserRanking) => void
+  queuePlayer?: (playerId: string) => void
+  dequeuePlayer?: (playerId: string) => void
 }
 
 export const PlayerRow: FC<PlayerRowProps> = ({
   player,
-  playerPosition,
   draftPlayer,
   rankPlayer,
-  hideDraftedPlayers
+  hideDraftedPlayers,
+  queuePlayer,
+  dequeuePlayer
 }) => {
 
   const handleDraftButtonClick = ($event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    $event.stopPropagation();
+    $event.stopPropagation()
     if (draftPlayer)
-        draftPlayer(player.key);
+      draftPlayer(player.key)
+  }
+
+  const handleQueueButtonClick = ($event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    $event.stopPropagation()
+    if (!queuePlayer || !dequeuePlayer)
+      return
+
+    !player.queued ? queuePlayer(player.key) : dequeuePlayer(player.key)
   }
 
   const renderActionButton = () => {
     if (!!draftPlayer)
       return (
-        <button 
-          onClick={($event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => handleDraftButtonClick($event)} 
-          disabled={player.drafted}>
-            Draft
-        </button>
+        <>
+          <button 
+            className={'queue-button' + (player.queued ? ' queued' : '')}
+            onClick={($event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => handleQueueButtonClick($event)}>
+            <FontAwesomeIcon icon={player.queued ? 'user-check' : 'user-plus'}/>
+          </button>
+          <button 
+            className="draft-button"
+            onClick={($event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => handleDraftButtonClick($event)} 
+            disabled={player.drafted}>
+              Draft
+          </button>
+        </>
       )
     if (!!rankPlayer)
       return (
@@ -55,11 +74,23 @@ export const PlayerRow: FC<PlayerRowProps> = ({
     >
     {/* <span className={`player-rank ${!!props.draftPlayer ? UserRanking[player.userRank] : ''}`}>{rank}</span> */}
       <div className={`player-name `}>
-        <div>{player.name}</div>
+        <div className="name">{player.name}</div>
         <div className="player-team-info">
-            <span>{playerPosition} - {player.team}</span>
+            <span>{player.position} - {player.team}</span>
         </div>
       </div>
+      <span className="player-adp">
+        <div>Full</div>
+        {player.fullSos}
+      </span>
+      <span className="player-adp">
+        <div>Early</div>
+        {player.earlySos}
+      </span>
+      <span className="player-adp">
+        <div>Late</div>
+        {player.playoffSos}
+      </span>
       <span className="player-adp">
         <div>ADP</div>
         {player.adp}

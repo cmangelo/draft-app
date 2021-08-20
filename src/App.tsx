@@ -16,11 +16,14 @@ import {
     faSquare,
     faTh,
     faTimes,
+    faUserCheck,
+    faUserPlus,
 } from '@fortawesome/free-solid-svg-icons'
 
 import { DraftArena } from './app/views/arena/DraftArena'
 
-library.add(faBars,
+library.add(
+  faBars,
 	faList,
 	faFileUpload,
 	faSignInAlt,
@@ -35,7 +38,10 @@ library.add(faBars,
 	faChevronLeft,
 	faChevronDown,
 	faTimes,
-	faSignOutAlt)
+	faSignOutAlt,
+  faUserPlus,
+  faUserCheck
+)
 
 function App() {
 

@@ -5,7 +5,9 @@ import { Tier } from './Tier'
 type PositionRanksProps = {
   position: PlayerPosition
   ranks: PopulatedTier[]
-  draftPlayer: (draftId: string) => void
+  draftPlayer?: (playerId: string) => void
+  queuePlayer?: (playerId: string) => void
+  dequeuePlayer?: (playerId: string) => void
   hideDraftedPlayers: boolean
 }
 
@@ -13,7 +15,9 @@ export const PositionRanks: FC<PositionRanksProps> = ({
   position,
   ranks,
   draftPlayer,
-  hideDraftedPlayers
+  hideDraftedPlayers,
+  queuePlayer,
+  dequeuePlayer
 }) => {
   const createTiers = () => 
     ranks.map(tier => 
@@ -23,6 +27,8 @@ export const PositionRanks: FC<PositionRanksProps> = ({
         tier={tier}
         playerPosition={position}
         hideDraftedPlayers={hideDraftedPlayers}
+        queuePlayer={queuePlayer}
+        dequeuePlayer={dequeuePlayer}
       />
     )
 

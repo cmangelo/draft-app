@@ -10,9 +10,13 @@ export type Player = {
   tier: number
   notes: string
   position: PlayerPosition
+  earlySos: number
+  playoffSos: number
+  fullSos: number
   userRank?: UserRanking
   // Frontend specific properties
   drafted?: boolean
+  queued?: boolean
 }
 
 export type RankingsVersions = {

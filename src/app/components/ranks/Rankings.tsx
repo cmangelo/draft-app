@@ -1,15 +1,22 @@
 import { FC } from 'react'
-import { AllTiers } from '../../../models/player'
+import { AllTiers, Player } from '../../../models/player'
+import { PlayerQueue } from '../queue/PlayerQueue'
 import { PositionRanks } from './PositionRanks'
 
 type RankingsProps = {
   rankings: AllTiers
-  draftPlayer: (playerId: string) => void
+  playerQueue?: Player[]
+  draftPlayer?: (playerId: string) => void
+  queuePlayer?: (playerId: string) => void
+  dequeuePlayer?: (playerId: string) => void
 }
 
 export const Rankings: FC<RankingsProps> = ({
   rankings,
-  draftPlayer
+  playerQueue,
+  draftPlayer,
+  queuePlayer,
+  dequeuePlayer
 }) => { 
 
   const renderGroups = () => {
@@ -23,6 +30,8 @@ export const Rankings: FC<RankingsProps> = ({
           ranks={positionRanks}
           position={positionRanks[0].playerPosition} 
           draftPlayer={draftPlayer} 
+          queuePlayer={queuePlayer}
+          dequeuePlayer={dequeuePlayer}
           hideDraftedPlayers 
          />
       )
@@ -34,6 +43,15 @@ export const Rankings: FC<RankingsProps> = ({
       <div className="ranks">
         <div className="groups">
           {renderGroups()}
+          {
+            playerQueue &&
+              <PlayerQueue 
+                queue={playerQueue}
+                draftPlayer={draftPlayer}
+                queuePlayer={queuePlayer}
+                dequeuePlayer={dequeuePlayer}
+              />
+          }
         </div>
       </div>
     </div>

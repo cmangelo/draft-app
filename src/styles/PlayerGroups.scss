@@ -54,91 +54,130 @@
         }
     }
 
-    .player-row {
+}
+
+.player-row {
+    display: flex;
+    padding: 4px 0;
+    width: 100%;
+    align-items: center;
+
+    &:last-of-type {
+        border: none;
+    }
+
+    .player-rank {
+        color: $secondary-font-color;
+        flex-basis: 7%;
+        font-size: .9em;
+        padding-right: 15px;
         display: flex;
-        padding: 4px 0;
-        width: 100%;
+        justify-content: flex-end;
+        align-items: center;
 
-        &:last-of-type {
-            border: none;
+
+        &.AllIn {
+            border-right: 5px solid $all-in-green;
         }
 
-        .player-rank {
+        &.Neutral {
+            border-right: 5px solid $neutral-yellow;
+        }
+
+        &.AllOut {
+            border-right: 5px solid $all-out-red;
+        }
+    }
+
+    .player-name {
+        flex-grow: 1;
+        font-size: .9em;
+        line-height: 1.2;
+        padding-left: 6px;
+
+        .name {
+            max-width: 110px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .player-team-info {
+            color: $ternary-font-color;
+            font-size: .7em;
+        }
+    }
+
+    .sos {
+        font-size: .9em;
+        font-weight: lighter;
+        line-height: 1.2;
+        margin: auto 0;
+        // padding-right: 20px;
+        text-align: right;
+
+        div {
             color: $secondary-font-color;
-            flex-basis: 7%;
-            font-size: .9em;
-            padding-right: 15px;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-
-
-            &.AllIn {
-                border-right: 5px solid $all-in-green;
-            }
-
-            &.Neutral {
-                border-right: 5px solid $neutral-yellow;
-            }
-
-            &.AllOut {
-                border-right: 5px solid $all-out-red;
-            }
+            font-size: .7em;
+            font-weight: bold;
         }
+    }
 
-        .player-name {
-            flex-grow: 1;
-            font-size: .9em;
-            line-height: 1.2;
-            padding-left: 6px;
+    .player-adp {
+        flex-basis: 10%;
+        font-size: .9em;
+        font-weight: lighter;
+        line-height: 1.2;
+        margin: auto 0;
+        // padding-right: 20px;
+        text-align: right;
 
-            .player-team-info {
-                color: $ternary-font-color;
-                font-size: .7em;
-            }
+        div {
+            color: $secondary-font-color;
+            font-size: .7em;
+            font-weight: bold;
         }
+    }
 
-        .player-adp {
-            flex-basis: 15%;
-            font-size: .9em;
-            font-weight: lighter;
-            line-height: 1.2;
-            margin: auto 0;
-            padding-right: 20px;
-            text-align: right;
+    .draft-button {
+        background-color: $secondary-color;
+        color: white;
+        font-size: 14px;
+        height: fit-content;
+        margin-left: 10px;
+        padding: 7px 13px;
+        border-radius: 25px;
+    }
 
-            div {
-                color: $secondary-font-color;
-                font-size: .7em;
-                font-weight: bold;
-            }
+    .queue-button {
+        color: white;
+        background-color: #7b7b7b;
+        font-size: 12px;
+        border-radius: 25px;
+        height: 30px;
+        width: 30px;
+        padding: 0;
+        margin-left: 10px;
+
+        &.queued {
+            background-color: #31cbd2;
         }
+    }
+
+    &.drafted {
+        opacity: .5;
 
         button {
-            background-color: $secondary-color;
-            color: white;
-            font-size: 14px;
-            height: fit-content;
-            margin: auto 0;
-            padding: 7px 13px;
-            border-radius: 25px;
+            background-color: $medium-grey;
+            opacity: 1;
         }
 
-        &.drafted {
-            opacity: .5;
-
-            button {
-                background-color: $medium-grey;
-                opacity: 1;
-            }
-
-            &.hide-drafted {
-                display: none;
-            }
+        &.hide-drafted {
+            display: none;
         }
+    }
 
-        &.selected {
-            background-color: $light-grey;
-        }
+    &.selected {
+        background-color: $light-grey;
     }
 }

@@ -1,14 +1,8 @@
 .DraftArena {
   height: 100vh;
   position: relative;
-  // display: grid;
-  // grid-template-rows: 50% 50%;
 
   &.full-screen-ranks {
-    // >.board-container {
-    //   height: 0;
-    // }
-
     >.ranks-container {
       height: 100%;
     }
@@ -22,6 +16,13 @@
     >.ranks-container {
       height: 50px;
     }
+  }
+
+  .back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: transparent;
   }
 
   .board-container {

@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { AxiosResponse } from 'axios'
 import { draftPlayer, getDraftDetails, getDrafts, getRanks } from '../../clients/proxyClient'
 import { DraftConfig, DraftOrder, DraftPicks, UserDraft } from '../../models/draft'
-import { Player } from '../../models/player'
+import { Player, RankingsVersions } from '../../models/player'
 
 export type PickState = {
   overall: number
@@ -18,11 +18,11 @@ type DraftState = {
   drafts: UserDraft[]
   pickState: PickState
   picks: DraftPicks
+  queue: string[]
 }
 
 const initialState: DraftState = {
   draftId: '',
-  draftConfig: undefined,
   pickState: {
     overall: 1,
     currTeam: 1,
@@ -31,7 +31,8 @@ const initialState: DraftState = {
   },
   teams: {},
   drafts: [],
-  picks: {}
+  picks: {},
+  queue: []
 }
 
 /**
@@ -47,10 +48,21 @@ export const getDraftsThunk = createAsyncThunk(
 
 export const loadDraftThunk = createAsyncThunk(
   'getDraftDetails',
-  async (draftId: string) => {
+  async (draftId: string, { dispatch }) => {
     const response = await getDraftDetails(draftId)
     const draftDetails = response.data
     const rankingsVersions = draftDetails.rankingsVersions
+    dispatch(getRanksThunk(rankingsVersions))
+
+    return {
+      draftDetails
+    }
+  }
+)
+
+export const getRanksThunk = createAsyncThunk(
+  'getRanks',
+  async(rankingsVersions?: RankingsVersions) => {
     const [
       qbRanks,
       rbRanks,
@@ -58,15 +70,14 @@ export const loadDraftThunk = createAsyncThunk(
       teRanks,
       flexRanks
     ] = await Promise.allSettled([
-      getRanks('QB', rankingsVersions.QB),
-      getRanks('RB', rankingsVersions.RB),
-      getRanks('WR', rankingsVersions.WR),
-      getRanks('TE', rankingsVersions.TE),
-      getRanks('FLEX', rankingsVersions.FLEX),
+      getRanks('QB', rankingsVersions?.QB),
+      getRanks('RB', rankingsVersions?.RB),
+      getRanks('WR', rankingsVersions?.WR),
+      getRanks('TE', rankingsVersions?.TE),
+      getRanks('FLEX', rankingsVersions?.FLEX),
     ]) as PromiseFulfilledResult<AxiosResponse<Player[]>>[]
 
-    return {
-      draftDetails,
+    return { 
       qbRanks: qbRanks.value.data,
       rbRanks: rbRanks.value.data,
       wrRanks: wrRanks.value.data,
@@ -90,6 +101,15 @@ export const draftArenaSlice = createSlice({
   name: 'draft',
   initialState,
   reducers: {
+    queuePlayer: (state, action) => {
+      const playerId = action.payload
+      state.queue.push(playerId)
+    },
+    dequeuePlayer: (state, action) => {
+      const playerId = action.payload
+      removePlayerFromQueue(state, playerId)
+    },
+    unloadDraft: (state) => initialState
   },
   extraReducers: reducer => 
     reducer
@@ -129,12 +149,17 @@ export const draftArenaSlice = createSlice({
         state.pickState.roundPick = getCurrRoundPick(newOverall, numDrafters)
         state.pickState.currRound = newRound
 
-
+        removePlayerFromQueue(state, playerId)
       })
       .addCase(draftPlayerThunk.fulfilled, (state, action) => {
-
       })
-  })
+})
+
+export const {
+  queuePlayer,
+  dequeuePlayer,
+  unloadDraft
+} = draftArenaSlice.actions
 
 export default draftArenaSlice.reducer
 
@@ -157,3 +182,6 @@ export const getCurrTeam = (overall: number, numDrafters: number) => {
 }
 
 export const getNewRound = (newOverall: number, numTeams: number) => Math.ceil(newOverall / numTeams)
+
+export const removePlayerFromQueue = (state: DraftState, playerId: string) => 
+  state.queue = state.queue.filter(p => p !== playerId)

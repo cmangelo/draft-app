@@ -67,7 +67,7 @@ export type DraftPick = {
   overall: number
   roundPick: number
   round: number
-  player: Player
+  player?: Player
 }
 
 export type TeamsWithPicks = {
