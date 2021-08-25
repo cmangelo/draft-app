@@ -78,13 +78,11 @@ export const getRanksThunk = createAsyncThunk(
       rbRanks,
       wrRanks,
       teRanks,
-      flexRanks
     ] = await Promise.allSettled([
       getRanks('QB', rankingsVersions?.QB),
       getRanks('RB', rankingsVersions?.RB),
       getRanks('WR', rankingsVersions?.WR),
       getRanks('TE', rankingsVersions?.TE),
-      getRanks('FLEX', rankingsVersions?.FLEX),
     ]) as PromiseFulfilledResult<AxiosResponse<Player[]>>[]
 
     return { 
@@ -92,7 +90,6 @@ export const getRanksThunk = createAsyncThunk(
       rbRanks: rbRanks.value.data,
       wrRanks: wrRanks.value.data,
       teRanks: teRanks.value.data,
-      flexRanks: flexRanks.value.data
     }
   }
 )

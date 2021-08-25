@@ -20,11 +20,10 @@ export type Player = {
 }
 
 export type RankingsVersions = {
-  QB: number
-  RB: number
-  WR: number
-  TE: number
-  FLEX: number
+  QB?: number | 'USER'
+  RB?: number | 'USER'
+  WR?: number | 'USER'
+  TE?: number | 'USER'
 }
 
 export type Tier = {

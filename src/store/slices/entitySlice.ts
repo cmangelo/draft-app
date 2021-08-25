@@ -9,7 +9,6 @@ type EntityState = {
   rbTiers?: NumberedMap<Tier>,
   wrTiers?: NumberedMap<Tier>,
   teTiers?: NumberedMap<Tier>,
-  flexRanks?: NumberedMap<Tier>,
   draftedPlayers: KeyedMap<boolean>,
   queuedPlayers: KeyedMap<boolean>,
 }
@@ -51,14 +50,12 @@ export const entitySlice = createSlice({
           rbRanks,
           wrRanks,
           teRanks,
-          flexRanks
         } = action.payload
 
         const { playerMap: qbPlayerMap, tierMap: qbTierMap } = buildTiers(qbRanks)
         const { playerMap: rbPlayerMap, tierMap: rbTierMap } = buildTiers(rbRanks)
         const { playerMap: wrPlayerMap, tierMap: wrTierMap } = buildTiers(wrRanks)
         const { playerMap: tePlayerMap, tierMap: teTierMap } = buildTiers(teRanks)
-        const { tierMap: flexTierMap } = buildTiers(flexRanks)
 
         state.players = {
           ...qbPlayerMap,
@@ -70,7 +67,6 @@ export const entitySlice = createSlice({
         state.rbTiers = rbTierMap
         state.wrTiers = wrTierMap
         state.teTiers = teTierMap
-        state.flexRanks = flexTierMap
       })
       .addCase(draftPlayerThunk.pending, (state, action) => {
         const playerId = action.meta.arg

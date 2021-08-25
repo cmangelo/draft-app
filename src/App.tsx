@@ -27,6 +27,7 @@ import { DraftArena } from './app/views/arena/DraftArena'
 import { DraftsList } from './app/views/draftsList/DraftsList'
 import { CreateDraft } from './app/views/createDraft/CreateDraft'
 import { Sidebar } from './app/components/sidebar/Sidebar'
+import { UserRanks } from './app/views/userRanks/UserRanks'
 
 library.add(
   faBars,
@@ -66,10 +67,10 @@ const routes = [
 		path: '/drafts',
 		main: (props: any) => <DraftsList {...props} />
 	},
-	// {
-	// 	path: '/players',
-	// 	main: (props: any) => <UserRanks {...props} />
-	// },
+	{
+		path: '/players',
+		main: (props: any) => <UserRanks {...props} />
+	},
 	// {
 	// 	path: '/',
 	// 	main: (props: any) => <LandingPage {...props} />

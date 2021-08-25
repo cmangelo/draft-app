@@ -10,7 +10,6 @@ const qbTierSelector = createSelector(entityStateSelector, state => state.qbTier
 const rbTierSelector = createSelector(entityStateSelector, state => state.rbTiers)
 const wrTierSelector = createSelector(entityStateSelector, state => state.wrTiers)
 const teTierSelector = createSelector(entityStateSelector, state => state.teTiers)
-const flexTierSelector = createSelector(entityStateSelector, state => state.flexRanks)
 const draftedPlayersSelector = createSelector(entityStateSelector, state => state.draftedPlayers)
 const queuedPlayersSelector = createSelector(entityStateSelector, state => state.queuedPlayers)
 
@@ -64,26 +63,17 @@ export const populatedTeTierSelector = createSelector(
   queuedPlayersSelector,
   (players, tiers, draftedPlayers, queuedPlayers) => populateTiers(PlayerPosition.TE, draftedPlayers, queuedPlayers, players, tiers)
 )
-export const populatedFlexTierSelector = createSelector(
-  playerSelector,
-  flexTierSelector,
-  draftedPlayersSelector,
-  queuedPlayersSelector,
-  (players, tiers, draftedPlayers, queuedPlayers) => populateTiers(PlayerPosition.FLEX, draftedPlayers, queuedPlayers, players, tiers)
-)
 
 export const populatedTierSelector = createSelector(
   populatedQbTierSelector,
   populatedRbTierSelector,
   populatedWrTierSelector,
   populatedTeTierSelector,
-  // populatedFlexTierSelector,
   (qbTiers, rbTiers, wrTiers, teTiers) => ({
     qbTiers,
     rbTiers,
     wrTiers,
     teTiers,
-    // flexTiers
   })
 )
 

@@ -16,8 +16,7 @@ export const getDraftDetails = (draftId: string): Promise<AxiosResponse<GetDraft
   return client.get<GetDraftResponse>(`/drafts/${draftId}`)
 }
 
-// TODO: API change - get latest if version is not specified
-export const getRanks = (position: string, version?: number): Promise<AxiosResponse<Player[]>> => {
+export const getRanks = (position: string, version?: number | 'USER'): Promise<AxiosResponse<Player[]>> => {
   return client.get<Player[]>(`/ranks/positions/${position}`, { params: { version } })
 }
 
