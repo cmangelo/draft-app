@@ -26,6 +26,7 @@ import { history } from './store/store'
 import { DraftArena } from './app/views/arena/DraftArena'
 import { DraftsList } from './app/views/draftsList/DraftsList'
 import { CreateDraft } from './app/views/createDraft/CreateDraft'
+import { Sidebar } from './app/components/sidebar/Sidebar'
 
 library.add(
   faBars,
@@ -79,6 +80,7 @@ function App() {
   return (
     <div className="App">
       <ConnectedRouter history={history}>
+				<Sidebar />
         <div className="content">
           <Switch>
             {routes.map(route => (
