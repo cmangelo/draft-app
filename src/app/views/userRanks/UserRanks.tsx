@@ -1,14 +1,22 @@
-import { FC, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
-import { AllTiers } from '../../../models/player'
-import { useAppSelector } from '../../../store/hooks'
+import { FC, useEffect, useState } from 'react'
+import { PopulatedTier } from '../../../models/player'
+import { useAppDispatch, useAppSelector } from '../../../store/hooks'
 import { populatedTierSelector } from '../../../store/selectors/entitySelector'
 import { getRanksThunk } from '../../../store/slices/draftArenaSlice'
-import { PositionRanks } from '../../components/ranks/PositionRanks'
+import { TierBucket } from '../../components/userRanks/TierBucket'
+import { insertTier as insertTierAction, deleteTier as deleteTierAction } from '../../../store/slices/entitySlice' 
 
 export const UserRanks: FC = () => {
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
+  const [selectedPosition, setSelectedPosition] = useState('QB')
   const rankings = useAppSelector(state => populatedTierSelector(state))
+  
+  const insertTier = (insertAfter: number) =>
+    dispatch(insertTierAction({ position: selectedPosition, insertAfter}))
+
+  const deleteTier = (tierNumber: number) =>
+    dispatch(deleteTierAction({ position: selectedPosition, tierNumber }))
+
   useEffect(() => {
     dispatch(getRanksThunk({
       QB: 'USER',
@@ -16,22 +24,38 @@ export const UserRanks: FC = () => {
       WR: 'USER',
       TE: 'USER',
     }))
-  }, [])
+  }, [dispatch])
+
+  const getSelectedPositionTiers = (): PopulatedTier[] => {
+    switch(selectedPosition) {
+      case 'QB':
+        return rankings.qbTiers
+      case 'RB':
+        return rankings.rbTiers
+      case 'WR':
+        return rankings.wrTiers
+      case 'TE':
+        return rankings.teTiers
+      default:
+        return rankings.qbTiers
+    }
+  }
 
   const renderGroups = () => {
     if (!rankings) return
 
-    return Object.values(rankings).map((positionRanks, index) => {
-      if (!positionRanks || !positionRanks.length) return null
-      return (
-        <PositionRanks
-          key={positionRanks[0].playerPosition}
-          ranks={positionRanks}
-          position={positionRanks[0].playerPosition} 
-          />
-      )
-    })
+    const selectedPositionTiers = getSelectedPositionTiers()
+
+    return selectedPositionTiers.map(tier => (
+      <TierBucket 
+        key={tier.tierNumber} 
+        tier={tier}
+        insertTier={insertTier}
+        deleteTier={deleteTier}
+      />
+    ))
   }
+
 
   return (
     <div className="UserRanks">

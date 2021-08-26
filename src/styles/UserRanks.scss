@@ -3,16 +3,60 @@
 
     .ranks {
         display: flex;
-        flex-direction: column;
-        flex: 1;
+        flex-wrap: wrap;
+        // display: flex;
+        // flex-direction: column;
+        // flex: 1;
 
-        .Group {
-            border: none;
-            max-height: calc(100vh - 58px);
+        // .Group {
+        //     border: none;
+        //     max-height: calc(100vh - 58px);
 
-            @include for-tablet-portrait-down {
-                max-height: calc(100vh - 111px);
+        //     @include for-tablet-portrait-down {
+        //         max-height: calc(100vh - 111px);
+        //     }
+        // }
+
+        .tier-bucket{
+            border-radius: 5px;
+            border: $default-border;
+            min-width: 300px;
+            margin: 10px;
+            box-shadow: 3px 3px 9px -6px rgba(95,95,95,0.75);
+
+            header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px;
+                border-bottom: $default-border;
+
+                h3 {
+                    margin: 0;
+                    font-weight: 600;
+                }
+
+                svg {
+                    cursor: pointer;
+                }
             }
+
+            .player-list {
+                padding-bottom: 40px;
+
+
+                &.empty-list {
+                    display: flex;
+                    justify-content: center;
+
+                }
+
+                p {
+                    color: #ababab;
+                    font-size: .9em;
+                }
+            }
+
         }
     }
 

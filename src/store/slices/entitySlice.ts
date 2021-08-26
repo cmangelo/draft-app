@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { KeyedMap, NumberedMap } from '../../models/common'
 import { Player, Tier } from '../../models/player'
 import { dequeuePlayer, draftPlayerThunk, getRanksThunk, loadDraftThunk, queuePlayer } from './draftArenaSlice'
@@ -41,7 +41,92 @@ const buildTiers = (players: Player[]) => {
 export const entitySlice = createSlice({
   name: 'entitySlice',
   initialState,
-  reducers: {},
+  reducers: {
+    insertTier: (state, action: PayloadAction<{position: string, insertAfter: number}>) => {
+      const { position, insertAfter } = action.payload
+      let tiers: NumberedMap<Tier>
+      switch(position) {
+        case 'QB':
+          tiers = state.qbTiers || {}
+          break
+        case 'RB':
+          tiers = state.rbTiers || {}
+          break
+        case 'WR':
+          tiers = state.wrTiers || {}
+          break
+        case 'TE':
+          tiers = state.teTiers || {}
+          break
+        default:
+          tiers = {}
+      }
+
+      const newTiers = Object.keys(tiers).reduce((acc, curr) => {
+        const currTierKey = parseInt(curr, 10)
+        if (currTierKey <= insertAfter) {
+          return {
+            ...acc,
+            [currTierKey]: tiers[currTierKey]
+          }
+        }
+        return {
+          ...acc,
+          [currTierKey + 1]: {
+            ...tiers[currTierKey],
+            tierNumber: currTierKey + 1,
+          },
+        }
+      }, {
+        [insertAfter + 1]: {
+          players: [],
+          tierNumber: insertAfter + 1,
+        } 
+      } as NumberedMap<Tier>)
+      state.qbTiers = newTiers
+    },
+    deleteTier: (state, action: PayloadAction<{position: string, tierNumber: number}>) => {
+      const { position, tierNumber } = action.payload
+      let tiers: NumberedMap<Tier>
+      switch(position) {
+        case 'QB':
+          tiers = state.qbTiers || {}
+          break
+        case 'RB':
+          tiers = state.rbTiers || {}
+          break
+        case 'WR':
+          tiers = state.wrTiers || {}
+          break
+        case 'TE':
+          tiers = state.teTiers || {}
+          break
+        default:
+          tiers = {}
+      }
+
+      const newTiers = Object.keys(tiers).reduce((acc, curr) => {
+        const currTierKey = parseInt(curr, 10)
+        if (currTierKey < tierNumber) {
+          return {
+            ...acc,
+            [currTierKey]: tiers[currTierKey]
+          }
+        }
+        if (currTierKey > tierNumber) {
+          return {
+            ...acc,
+            [currTierKey - 1]: {
+              ...tiers[currTierKey],
+              tierNumber: currTierKey - 1,
+            },
+          }
+        }
+        return acc
+      }, {} as NumberedMap<Tier>)
+      state.qbTiers = newTiers
+    }
+  },
   extraReducers: reducer => 
     reducer
       .addCase(getRanksThunk.fulfilled, (state, action) => {
@@ -90,5 +175,10 @@ export const entitySlice = createSlice({
         delete state.queuedPlayers[playerId]
       })
 })
+
+export const {
+  insertTier,
+  deleteTier
+} = entitySlice.actions
 
 export default entitySlice.reducer

@@ -58,8 +58,8 @@
 
 .player-row {
     display: flex;
-    padding: 4px 0;
-    width: 100%;
+    padding: 4px 10px;
+    // width: 100%;
     align-items: center;
 
     &:last-of-type {
@@ -90,13 +90,13 @@
     }
 
     .player-name {
-        flex-grow: 1;
+        flex: 1;
         font-size: .9em;
         line-height: 1.2;
-        padding-left: 6px;
+        // padding-left: 6px;
 
         .name {
-            max-width: 110px;
+            // max-width: 110px;
             text-overflow: ellipsis;
             white-space: nowrap;
             overflow: hidden;
