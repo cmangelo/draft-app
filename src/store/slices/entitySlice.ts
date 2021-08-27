@@ -1,22 +1,63 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { saveRanks } from '../../clients/proxyClient'
 import { KeyedMap, NumberedMap } from '../../models/common'
 import { Player, Tier } from '../../models/player'
+import { RankItem } from '../../models/ranks'
+import { RootState } from '../store'
 import { dequeuePlayer, draftPlayerThunk, getRanksThunk, loadDraftThunk, queuePlayer } from './draftArenaSlice'
 
 type EntityState = {
   players?: KeyedMap<Player>
-  qbTiers?: NumberedMap<Tier>,
-  rbTiers?: NumberedMap<Tier>,
-  wrTiers?: NumberedMap<Tier>,
-  teTiers?: NumberedMap<Tier>,
-  draftedPlayers: KeyedMap<boolean>,
-  queuedPlayers: KeyedMap<boolean>,
+  qbTiers: NumberedMap<Tier>
+  rbTiers: NumberedMap<Tier>
+  wrTiers: NumberedMap<Tier>
+  teTiers: NumberedMap<Tier>
+  draftedPlayers: KeyedMap<boolean>
+  queuedPlayers: KeyedMap<boolean>
+  changeSinceLastSave: boolean
 }
 
 const initialState: EntityState = {
+  qbTiers: {},
+  rbTiers: {},
+  wrTiers: {},
+  teTiers: {},
   draftedPlayers: {},
   queuedPlayers: {},
+  changeSinceLastSave: false
 }
+
+const tiersToRankItems = (tiers: NumberedMap<Tier>, position: string) => {
+  let rank = 1
+  return Object.keys(tiers)
+    .map(tierNumber => tiers[+tierNumber])
+    .sort((a, b) => a.tierNumber - b.tierNumber)
+    .map(tier => 
+      tier.players.map(playerKey => ({
+        key: playerKey,
+        rank: rank++,
+        tier: tier.tierNumber,
+        position
+      } as RankItem))
+    )
+    .flat()
+}
+
+export const saveRanksThunk = createAsyncThunk(
+  'saveRanks',
+  async (_, { getState }) => {
+    const entityState = (getState() as RootState).entity
+    const qbRanks = tiersToRankItems(entityState.qbTiers, 'QB')
+    console.log(qbRanks)
+    // await saveRanks('QB', {ranks: []})
+  },
+  {
+    condition: (_, { getState }) => {
+      console.log(getState())
+      return (getState() as RootState).entity.changeSinceLastSave
+    }
+  }
+)
 
 const buildTiers = (players: Player[]) => {
   const playerMap = players.reduce((acc, player) => {
@@ -125,6 +166,42 @@ export const entitySlice = createSlice({
         return acc
       }, {} as NumberedMap<Tier>)
       state.qbTiers = newTiers
+    },
+    updatePlayerRank: (state, action: PayloadAction<{
+      position: string,
+      startTier: number,
+      endTier: number,
+      startIndex: number,
+      endIndex: number
+    }>) => {
+      const { position, startTier, endTier, startIndex, endIndex } = action.payload
+      let tiers: NumberedMap<Tier>
+      switch(position) {
+        case 'QB':
+          tiers = state.qbTiers || {}
+          break
+        case 'RB':
+          tiers = state.rbTiers || {}
+          break
+        case 'WR':
+          tiers = state.wrTiers || {}
+          break
+        case 'TE':
+          tiers = state.teTiers || {}
+          break
+        default:
+          tiers = {}
+      }
+
+      if (startTier === endTier) {
+        const [removed] = tiers[startTier].players.splice(startIndex, 1)
+        tiers[startTier].players.splice(endIndex, 0, removed)
+      } else {
+        const [removed] = tiers[startTier].players.splice(startIndex, 1)
+        tiers[endTier].players.splice(endIndex, 0, removed)
+        tiers[startTier].players.splice(startIndex, 0)
+      }
+      state.changeSinceLastSave = true
     }
   },
   extraReducers: reducer => 
@@ -178,7 +255,8 @@ export const entitySlice = createSlice({
 
 export const {
   insertTier,
-  deleteTier
+  deleteTier,
+  updatePlayerRank
 } = entitySlice.actions
 
 export default entitySlice.reducer

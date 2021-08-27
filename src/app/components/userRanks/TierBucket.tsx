@@ -1,5 +1,6 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FC } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Draggable } from 'react-beautiful-dnd'
 import { PopulatedTier } from '../../../models/player'
 import { PlayerRow } from '../ranks/PlayerRow'
 
@@ -40,8 +41,23 @@ export const TierBucket: FC<TierBucketProps> = ({
             <p>No players in this tier</p>
 
           ) : (
-            tier.players.map(player => (
-              <PlayerRow key={player.key} player={player}/>
+            tier.players.map((player, index) => (
+              <Draggable
+                key={player.key}
+                draggableId={player.key}
+                index={index}>
+                {
+                  provided => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}>
+
+                        <PlayerRow key={player.key} player={player}/>
+                    </div>
+                  )
+                }
+              </Draggable>
             ))
           )
         }

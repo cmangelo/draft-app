@@ -19,12 +19,8 @@ export type Player = {
   queued?: boolean
 }
 
-export type RankingsVersions = {
-  QB?: number | 'USER'
-  RB?: number | 'USER'
-  WR?: number | 'USER'
-  TE?: number | 'USER'
-}
+type Version = number | 'USER'
+export type RankingsVersions = NullablePosition<Version> 
 
 export type Tier = {
   tierNumber: number
@@ -50,7 +46,6 @@ export type AllTiers = {
   rbTiers: PopulatedTier[]
   wrTiers: PopulatedTier[]
   teTiers: PopulatedTier[]
-  // flexTiers: PopulatedTier[]
 }
 
 export enum UserRanking {
@@ -58,4 +53,18 @@ export enum UserRanking {
   Neutral,
   AllOut,
   Unranked
+}
+
+export type Position<T> = {
+  QB: T
+  RB: T
+  WR: T
+  TE: T
+}
+
+export type NullablePosition<T> ={
+  QB?: T
+  RB?: T
+  WR?: T
+  TE?: T
 }

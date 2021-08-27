@@ -1,6 +1,7 @@
 import axios, { AxiosResponse } from 'axios'
 import { CreateDraftRequest, CreateDraftResponse, DraftPlayerRequest, GetDraftResponse, UserDraft } from '../models/draft'
 import { Player } from '../models/player'
+import { UpdateRanksRequest } from '../models/ranks'
 
 const client = axios.create({
   headers: {
@@ -18,6 +19,10 @@ export const getDraftDetails = (draftId: string): Promise<AxiosResponse<GetDraft
 
 export const getRanks = (position: string, version?: number | 'USER'): Promise<AxiosResponse<Player[]>> => {
   return client.get<Player[]>(`/ranks/positions/${position}`, { params: { version } })
+}
+
+export const saveRanks = (position: string, ranks: UpdateRanksRequest): Promise<AxiosResponse> => {
+  return client.put(`/ranks/positions/${position}`, ranks)
 }
 
 export const createDraft = (draftConfig: CreateDraftRequest): Promise<AxiosResponse<CreateDraftResponse>> => {
