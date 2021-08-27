@@ -40,9 +40,9 @@ export const DraftArena: FC<RouteComponentProps<MatchParams>> = ({
 
   const [ranksView, setRanksView] = useState(0)
 
-  const draftPlayer = (playerId: string) => dispatch(draftPlayerThunk(playerId))
-  const queuePlayer = (playerId: string) => dispatch(queuePlayerAction(playerId))
-  const dequeuePlayer = (playerId: string) => dispatch(dequeuePlayerAction(playerId))
+  const draftPlayer = (playerId: string) => dispatch(draftPlayerThunk({ playerId }))
+  const queuePlayer = (playerId: string) => dispatch(queuePlayerAction({ playerId }))
+  const dequeuePlayer = (playerId: string) => dispatch(dequeuePlayerAction({ playerId }))
   const updateQueueOrder = (oldIndex: number, newIndex: number) => dispatch(updateQueueOrderAction({ oldIndex, newIndex }))
   const changeRanksView = () => setRanksView(ranksView < RANKS_VIEWS_ORDER.length - 1 ? ranksView + 1 : 0)
   const backButtonClick = () => {

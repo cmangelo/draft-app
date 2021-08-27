@@ -24,8 +24,7 @@ export const UserRankWidget: FC<UserRankWidgetProps> = ({
   return (
     <div className="UserRankWidget">
       <FontAwesomeIcon
-        // icon={player?.userRank === UserRanking.AllIn ? "check-square" : "square"}
-        icon={['fas', 'check-square']}
+        icon={player?.userRank === UserRanking.AllIn ? "check-square" : "square"}
         size={size}
         className="all-in"
         onClick={($event) => handleRankingClick(UserRanking.AllIn, $event)} />

@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react'
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd'
-import { PopulatedTier } from '../../../models/player'
+import { PlayerPosition,  Positions } from '../../../models/player'
 import { useAppDispatch, useAppSelector } from '../../../store/hooks'
 import { populatedTierSelector } from '../../../store/selectors/entitySelector'
 import { getRanksThunk } from '../../../store/slices/draftArenaSlice'
@@ -13,10 +13,17 @@ import {
  } from '../../../store/slices/entitySlice' 
 import { GroupSelector } from '../../components/ranks/GroupSelector'
 
+export type VisiblePositions = Positions<boolean>
+
 export const UserRanks: FC = () => {
   const dispatch = useAppDispatch()
-  const [selectedPosition, setSelectedPosition] = useState('QB')
-  const [positions, setPositions] = useState({ 'QB': true, 'RB': false, 'WR': false, 'TE': false })
+  const [selectedPosition, setSelectedPosition] = useState<PlayerPosition>(PlayerPosition.QB)
+  const [positions, setPositions] = useState<VisiblePositions>({ 
+    [PlayerPosition.QB]: true, 
+    [PlayerPosition.RB]: false, 
+    [PlayerPosition.WR]: false, 
+    [PlayerPosition.TE]: false 
+  })
   const rankings = useAppSelector(state => populatedTierSelector(state))
   
   const insertTier = (insertAfter: number) =>
@@ -45,25 +52,10 @@ export const UserRanks: FC = () => {
     }))
   }, [dispatch])
 
-  const getSelectedPositionTiers = (): PopulatedTier[] => {
-    switch(selectedPosition) {
-      case 'QB':
-        return rankings.qbTiers
-      case 'RB':
-        return rankings.rbTiers
-      case 'WR':
-        return rankings.wrTiers
-      case 'TE':
-        return rankings.teTiers
-      default:
-        return rankings.qbTiers
-    }
-  }
-
   const renderGroups = () => {
     if (!rankings) return
 
-    const selectedPositionTiers = getSelectedPositionTiers()
+    const selectedPositionTiers = rankings[selectedPosition]
 
     return selectedPositionTiers.map(tier => (
       <Droppable key={tier.tierNumber} droppableId={tier.tierNumber.toString()}>
@@ -84,7 +76,7 @@ export const UserRanks: FC = () => {
     ))
   }
 
-  const onPositionChange = (position: string) => {
+  const onPositionChange = (position: PlayerPosition) => {
     setPositions({
       ...positions,
       [selectedPosition]: false,
@@ -100,7 +92,7 @@ export const UserRanks: FC = () => {
   return (
     <div className="UserRanks">
       <header>
-        <GroupSelector visibleGroups={positions} togglePositionVisible={onPositionChange}></GroupSelector>
+        <GroupSelector groupVisibility={positions} togglePositionVisible={onPositionChange}></GroupSelector>
         <button onClick={onSaveClick}>Save</button>
       </header>
       <div className="ranks">

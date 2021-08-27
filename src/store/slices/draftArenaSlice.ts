@@ -3,7 +3,16 @@ import { AxiosResponse } from 'axios'
 import { push } from 'connected-react-router'
 import { createDraft, draftPlayer, getDraftDetails, getDrafts, getRanks } from '../../clients/proxyClient'
 import { CreateDraftRequest, DraftConfig, DraftOrder, DraftPicks, UserDraft } from '../../models/draft'
-import { Player, RankingsVersions } from '../../models/player'
+import { Player, PlayerPosition, RankingsVersions } from '../../models/player'
+import { 
+  DequeuePlayerPayload, 
+  DraftPlayerThunkPayload, 
+  GetDraftsThunkFulfilledPayload, 
+  GetRanksThunkFulfilledPayload, 
+  LoadDraftThunkFulfilledPayload, 
+  QueuePlayerPayload, 
+  UpdateQueueOrderPayload 
+} from '../models/draftArenaActions'
 
 export type PickState = {
   overall: number
@@ -41,7 +50,7 @@ const initialState: DraftState = {
  */
 export const getDraftsThunk = createAsyncThunk(
   'getDrafts', 
-  async () => {
+  async (): Promise<GetDraftsThunkFulfilledPayload> => {
     const response = await getDrafts()
     return response.data 
   }
@@ -49,7 +58,7 @@ export const getDraftsThunk = createAsyncThunk(
 
 export const loadDraftThunk = createAsyncThunk(
   'getDraftDetails',
-  async (draftId: string, { dispatch }) => {
+  async (draftId: string, { dispatch }): Promise<LoadDraftThunkFulfilledPayload> => {
     const response = await getDraftDetails(draftId)
     const draftDetails = response.data
     const rankingsVersions = draftDetails.rankingsVersions
@@ -63,7 +72,7 @@ export const loadDraftThunk = createAsyncThunk(
 
 export const createDraftThunk = createAsyncThunk(
   'createDraft',
-  async (draftConfig: CreateDraftRequest, { dispatch }) => {
+  async (draftConfig: CreateDraftRequest, { dispatch }): Promise<void> => {
     const response = await createDraft(draftConfig)
     const draftId = response.data.draftId
     dispatch(push(`/drafts/${draftId}`))
@@ -72,31 +81,31 @@ export const createDraftThunk = createAsyncThunk(
 
 export const getRanksThunk = createAsyncThunk(
   'getRanks',
-  async(rankingsVersions?: RankingsVersions) => {
+  async(rankingsVersions?: RankingsVersions): Promise<GetRanksThunkFulfilledPayload> => {
     const [
       qbRanks,
       rbRanks,
       wrRanks,
       teRanks,
     ] = await Promise.allSettled([
-      getRanks('QB', rankingsVersions?.QB),
-      getRanks('RB', rankingsVersions?.RB),
-      getRanks('WR', rankingsVersions?.WR),
-      getRanks('TE', rankingsVersions?.TE),
+      getRanks(PlayerPosition.QB, rankingsVersions?.QB),
+      getRanks(PlayerPosition.RB, rankingsVersions?.RB),
+      getRanks(PlayerPosition.WR, rankingsVersions?.WR),
+      getRanks(PlayerPosition.TE, rankingsVersions?.TE),
     ]) as PromiseFulfilledResult<AxiosResponse<Player[]>>[]
 
     return { 
-      qbRanks: qbRanks.value.data,
-      rbRanks: rbRanks.value.data,
-      wrRanks: wrRanks.value.data,
-      teRanks: teRanks.value.data,
+      [PlayerPosition.QB]: qbRanks.value.data,
+      [PlayerPosition.RB]: rbRanks.value.data,
+      [PlayerPosition.WR]: wrRanks.value.data,
+      [PlayerPosition.TE]: teRanks.value.data,
     }
   }
 )
 
 export const draftPlayerThunk = createAsyncThunk(
   'draftPlayer',
-  async (playerId: string, { getState }) => {
+  async ({ playerId }: DraftPlayerThunkPayload, { getState }): Promise<void> => {
     const state = getState() as { draftArena: DraftState }
     const { draftId, pickState } = state.draftArena
     // Decrementing overall by 1 since the 'pending' reducer runs and increments overall before this gets run
@@ -108,24 +117,24 @@ export const draftArenaSlice = createSlice({
   name: 'draft',
   initialState,
   reducers: {
-    queuePlayer: (state, action: PayloadAction<string>) => {
-      const playerId = action.payload
+    queuePlayer: (state, action: PayloadAction<QueuePlayerPayload>) => {
+      const { playerId } = action.payload
       state.queue.push(playerId)
     },
-    dequeuePlayer: (state, action: PayloadAction<string>) => {
-      const playerId = action.payload
+    dequeuePlayer: (state, action: PayloadAction<DequeuePlayerPayload>) => {
+      const { playerId } = action.payload
       removePlayerFromQueue(state, playerId)
     },
-    updateQueueOrder: (state, action: PayloadAction<{ newIndex: number, oldIndex: number }>) => {
+    updateQueueOrder: (state, action: PayloadAction<UpdateQueueOrderPayload>) => {
       const { oldIndex, newIndex } = action.payload
       const [removed] = state.queue.splice(oldIndex, 1)
       state.queue.splice(newIndex, 0, removed)
     },
-    unloadDraft: (state) => initialState
+    unloadDraft: () => initialState
   },
   extraReducers: reducer => 
     reducer
-      .addCase(getDraftsThunk.fulfilled, (state, action) => {
+      .addCase(getDraftsThunk.fulfilled, (state, action: PayloadAction<GetDraftsThunkFulfilledPayload>) => {
         state.drafts = action.payload
       })
       .addCase(loadDraftThunk.fulfilled, (state, action) => {
@@ -149,7 +158,7 @@ export const draftArenaSlice = createSlice({
       })
       .addCase(draftPlayerThunk.pending, (state, action) => {
         // Optimistically update the draft state assuming call succeeds
-        const playerId = action.meta.arg
+        const { playerId } = action.meta.arg
         const numDrafters = state.draftConfig?.numDrafters as number
         const newOverall = state.pickState.overall + 1
         const newRound = getNewRound(newOverall, numDrafters)
@@ -162,8 +171,6 @@ export const draftArenaSlice = createSlice({
         state.pickState.currRound = newRound
 
         removePlayerFromQueue(state, playerId)
-      })
-      .addCase(draftPlayerThunk.fulfilled, (state, action) => {
       })
 })
 

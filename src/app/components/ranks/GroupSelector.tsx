@@ -1,27 +1,25 @@
 import { ChangeEvent, FC } from 'react'
-
-// import { EPosition } from '../models/enums/position.enum';
+import { PlayerPosition } from '../../../models/player'
+import { VisiblePositions } from '../../views/userRanks/UserRanks'
 
 type GroupSelectorProps = {
-  visibleGroups: { [key: string]: boolean }
-  togglePositionVisible: (position: string) => void 
+  groupVisibility: VisiblePositions
+  togglePositionVisible: (position: PlayerPosition) => void 
 }
 
 export const GroupSelector: FC<GroupSelectorProps> = ({
-  visibleGroups,
+  groupVisibility,
   togglePositionVisible
 }) => {
 
   const handleCheckbox = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.value)
     if (e.target.value)
-      togglePositionVisible(e.target.value);
+      togglePositionVisible(e.target.value as PlayerPosition)
   }
 
   return (
     <div className="GroupSelector">
-      {Object.keys(visibleGroups).map((key: string) => {
-        const group = parseInt(key)
+      {Object.keys(groupVisibility).map((key: string) => {
         const inputId = "i" + key
         return (
           <div key={key}>
@@ -29,7 +27,7 @@ export const GroupSelector: FC<GroupSelectorProps> = ({
               id={inputId}
               value={key}
               onChange={handleCheckbox}
-              checked={visibleGroups[key]} />
+              checked={groupVisibility[key as PlayerPosition]} />
             <label htmlFor={inputId}>{key}</label>
           </div>
         )

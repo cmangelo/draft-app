@@ -1,33 +1,33 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { saveRanks } from '../../clients/proxyClient'
 import { KeyedMap, NumberedMap } from '../../models/common'
-import { Player, Tier } from '../../models/player'
+import { Player, PlayerPosition, Positions, Tier } from '../../models/player'
 import { RankItem } from '../../models/ranks'
+import { DeleteTierPayload, InsertTierPayload, UpdatePlayerRankPayload } from '../models/entityActions'
 import { RootState } from '../store'
 import { dequeuePlayer, draftPlayerThunk, getRanksThunk, loadDraftThunk, queuePlayer } from './draftArenaSlice'
 
 type EntityState = {
   players?: KeyedMap<Player>
-  qbTiers: NumberedMap<Tier>
-  rbTiers: NumberedMap<Tier>
-  wrTiers: NumberedMap<Tier>
-  teTiers: NumberedMap<Tier>
+  tiers: Positions<NumberedMap<Tier>>
   draftedPlayers: KeyedMap<boolean>
   queuedPlayers: KeyedMap<boolean>
   changeSinceLastSave: boolean
 }
 
 const initialState: EntityState = {
-  qbTiers: {},
-  rbTiers: {},
-  wrTiers: {},
-  teTiers: {},
+  tiers: {
+    QB: {},
+    RB: {},
+    WR: {},
+    TE: {},
+  },
   draftedPlayers: {},
   queuedPlayers: {},
   changeSinceLastSave: false
 }
 
-const tiersToRankItems = (tiers: NumberedMap<Tier>, position: string) => {
+const tiersToRankItems = (tiers: NumberedMap<Tier>, position: PlayerPosition) => {
   let rank = 1
   return Object.keys(tiers)
     .map(tierNumber => tiers[+tierNumber])
@@ -47,8 +47,7 @@ export const saveRanksThunk = createAsyncThunk(
   'saveRanks',
   async (_, { getState }) => {
     const entityState = (getState() as RootState).entity
-    const qbRanks = tiersToRankItems(entityState.qbTiers, 'QB')
-    console.log(qbRanks)
+    // const qbRanks = tiersToRankItems(entityState.tiers[PlayerPosition.QB], PlayerPosition.QB)
     // await saveRanks('QB', {ranks: []})
   },
   {
@@ -83,25 +82,9 @@ export const entitySlice = createSlice({
   name: 'entitySlice',
   initialState,
   reducers: {
-    insertTier: (state, action: PayloadAction<{position: string, insertAfter: number}>) => {
+    insertTier: (state, action: PayloadAction<InsertTierPayload>) => {
       const { position, insertAfter } = action.payload
-      let tiers: NumberedMap<Tier>
-      switch(position) {
-        case 'QB':
-          tiers = state.qbTiers || {}
-          break
-        case 'RB':
-          tiers = state.rbTiers || {}
-          break
-        case 'WR':
-          tiers = state.wrTiers || {}
-          break
-        case 'TE':
-          tiers = state.teTiers || {}
-          break
-        default:
-          tiers = {}
-      }
+      const tiers = state.tiers[position]
 
       const newTiers = Object.keys(tiers).reduce((acc, curr) => {
         const currTierKey = parseInt(curr, 10)
@@ -124,27 +107,11 @@ export const entitySlice = createSlice({
           tierNumber: insertAfter + 1,
         } 
       } as NumberedMap<Tier>)
-      state.qbTiers = newTiers
+      state.tiers[position] = newTiers
     },
-    deleteTier: (state, action: PayloadAction<{position: string, tierNumber: number}>) => {
+    deleteTier: (state, action: PayloadAction<DeleteTierPayload>) => {
       const { position, tierNumber } = action.payload
-      let tiers: NumberedMap<Tier>
-      switch(position) {
-        case 'QB':
-          tiers = state.qbTiers || {}
-          break
-        case 'RB':
-          tiers = state.rbTiers || {}
-          break
-        case 'WR':
-          tiers = state.wrTiers || {}
-          break
-        case 'TE':
-          tiers = state.teTiers || {}
-          break
-        default:
-          tiers = {}
-      }
+      const tiers = state.tiers[position]
 
       const newTiers = Object.keys(tiers).reduce((acc, curr) => {
         const currTierKey = parseInt(curr, 10)
@@ -165,34 +132,11 @@ export const entitySlice = createSlice({
         }
         return acc
       }, {} as NumberedMap<Tier>)
-      state.qbTiers = newTiers
+      state.tiers[position] = newTiers
     },
-    updatePlayerRank: (state, action: PayloadAction<{
-      position: string,
-      startTier: number,
-      endTier: number,
-      startIndex: number,
-      endIndex: number
-    }>) => {
+    updatePlayerRank: (state, action: PayloadAction<UpdatePlayerRankPayload>) => {
       const { position, startTier, endTier, startIndex, endIndex } = action.payload
-      let tiers: NumberedMap<Tier>
-      switch(position) {
-        case 'QB':
-          tiers = state.qbTiers || {}
-          break
-        case 'RB':
-          tiers = state.rbTiers || {}
-          break
-        case 'WR':
-          tiers = state.wrTiers || {}
-          break
-        case 'TE':
-          tiers = state.teTiers || {}
-          break
-        default:
-          tiers = {}
-      }
-
+      const tiers = state.tiers[position]
       if (startTier === endTier) {
         const [removed] = tiers[startTier].players.splice(startIndex, 1)
         tiers[startTier].players.splice(endIndex, 0, removed)
@@ -208,10 +152,10 @@ export const entitySlice = createSlice({
     reducer
       .addCase(getRanksThunk.fulfilled, (state, action) => {
         const {
-          qbRanks,
-          rbRanks,
-          wrRanks,
-          teRanks,
+          QB: qbRanks,
+          RB: rbRanks,
+          WR: wrRanks,
+          TE: teRanks,
         } = action.payload
 
         const { playerMap: qbPlayerMap, tierMap: qbTierMap } = buildTiers(qbRanks)
@@ -225,13 +169,13 @@ export const entitySlice = createSlice({
           ...wrPlayerMap,
           ...tePlayerMap
         }
-        state.qbTiers = qbTierMap
-        state.rbTiers = rbTierMap
-        state.wrTiers = wrTierMap
-        state.teTiers = teTierMap
+        state.tiers[PlayerPosition.QB] = qbTierMap
+        state.tiers[PlayerPosition.RB] = rbTierMap
+        state.tiers[PlayerPosition.WR] = wrTierMap
+        state.tiers[PlayerPosition.TE] = teTierMap
       })
       .addCase(draftPlayerThunk.pending, (state, action) => {
-        const playerId = action.meta.arg
+        const { playerId } = action.meta.arg
         state.draftedPlayers[playerId] = true
         delete state.queuedPlayers[playerId]
       })
@@ -244,11 +188,11 @@ export const entitySlice = createSlice({
         })
       })
       .addCase(queuePlayer, (state, action) => {  
-        const playerId = action.payload
+        const { playerId } = action.payload
         state.queuedPlayers[playerId] = true
       })
       .addCase(dequeuePlayer, (state, action) => {
-        const playerId = action.payload
+        const { playerId } = action.payload
         delete state.queuedPlayers[playerId]
       })
 })

@@ -1,5 +1,4 @@
 import { FC } from 'react'
-import { DragDropContext, Droppable } from 'react-beautiful-dnd'
 import { PlayerPosition, PopulatedTier } from '../../../models/player'
 import { Tier } from './Tier'
 
@@ -20,8 +19,6 @@ export const PositionRanks: FC<PositionRanksProps> = ({
   queuePlayer,
   dequeuePlayer
 }) => {
-  const onDragEnd = () => {}
-
   const createTiers = () => 
     ranks.map(tier => (
 
@@ -36,13 +33,11 @@ export const PositionRanks: FC<PositionRanksProps> = ({
 
             />
     )
-    )
+  )
 
   return (
     <div className="Group">
-      <DragDropContext onDragEnd={onDragEnd}>
-        {createTiers()}
-      </DragDropContext>
+      {createTiers()}
     </div>
   )
 }

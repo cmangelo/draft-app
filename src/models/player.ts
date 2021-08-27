@@ -1,3 +1,10 @@
+export enum PlayerPosition {
+  QB = 'QB',
+  RB = 'RB',
+  WR = 'WR',
+  TE = 'TE',
+}
+
 export type Player = {
   key: string
   name: string
@@ -19,8 +26,8 @@ export type Player = {
   queued?: boolean
 }
 
-type Version = number | 'USER'
-export type RankingsVersions = NullablePosition<Version> 
+export type Version = number | 'USER'
+export type RankingsVersions = NullablePositions<Version> 
 
 export type Tier = {
   tierNumber: number
@@ -33,20 +40,8 @@ export type PopulatedTier = {
   players: Player[]
 }
 
-export enum PlayerPosition {
-  QB = 'QB',
-  RB = 'RB',
-  WR = 'WR',
-  TE = 'TE',
-  FLEX = 'FLEX'
-}
 
-export type AllTiers = {
-  qbTiers: PopulatedTier[]
-  rbTiers: PopulatedTier[]
-  wrTiers: PopulatedTier[]
-  teTiers: PopulatedTier[]
-}
+export type AllTiers = Positions<PopulatedTier[]>
 
 export enum UserRanking {
   AllIn,
@@ -55,16 +50,10 @@ export enum UserRanking {
   Unranked
 }
 
-export type Position<T> = {
-  QB: T
-  RB: T
-  WR: T
-  TE: T
+export type Positions<T> = {
+  [key in PlayerPosition]: T
 }
 
-export type NullablePosition<T> ={
-  QB?: T
-  RB?: T
-  WR?: T
-  TE?: T
+export type NullablePositions<T> = {
+  [key in PlayerPosition]: T | null
 }
