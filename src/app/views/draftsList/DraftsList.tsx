@@ -4,7 +4,6 @@ import { useHistory } from 'react-router-dom'
 import { UserDraft } from '../../../models/draft'
 import { getDraftsThunk } from '../../../store/slices/draftArenaSlice'
 import { useAppDispatch, useAppSelector } from '../../../store/hooks'
-import { populatedQbTierSelector } from '../../../store/selectors/entitySelector'
 import { draftsSelector } from '../../../store/selectors/draftArenaSelector'
 
 export const DraftsList: FC = () => {
@@ -12,8 +11,6 @@ export const DraftsList: FC = () => {
   const history = useHistory()
 
   const drafts = useAppSelector(state => draftsSelector(state))
-  const qbs = useAppSelector(state => populatedQbTierSelector(state))
-  console.log(qbs)
 
   useEffect(() => {
     dispatch(getDraftsThunk())

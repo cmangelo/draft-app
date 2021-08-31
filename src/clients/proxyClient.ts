@@ -3,10 +3,18 @@ import { CreateDraftRequest, CreateDraftResponse, DraftPlayerRequest, GetDraftRe
 import { Player, PlayerPosition, Version } from '../models/player'
 import { UpdateRanksRequest } from '../models/ranks'
 
-const client = axios.create({
-  headers: {
-    'User-Id': 'christianxcv'
+const client = axios.create()
+
+client.interceptors.request.use((config) => {
+  config.headers = {
+    ...config.headers,
+    ...generateUserIdHeader(),
   }
+  return config
+})
+
+const generateUserIdHeader = () => ({
+  'User-Id': localStorage.getItem('username')
 })
 
 export const getDrafts = (): Promise<AxiosResponse<UserDraft[]>> => {

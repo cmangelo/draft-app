@@ -29,6 +29,7 @@ import { DraftsList } from './app/views/draftsList/DraftsList'
 import { CreateDraft } from './app/views/createDraft/CreateDraft'
 import { Sidebar } from './app/components/sidebar/Sidebar'
 import { UserRanks } from './app/views/userRanks/UserRanks'
+import { Landing } from './app/views/landing/Landing'
 
 library.add(
   faBars,
@@ -53,10 +54,10 @@ library.add(
 )
 
 const routes = [
-	// {
-	// 	path: '/login',
-	// 	main: (props: any) => <LandingPage {...props} />
-	// },
+	{
+		path: '/login',
+		main: (props: any) => <Landing {...props} />
+	},
 	{
 		path: '/drafts/create',
 		main: (props: any) => <CreateDraft {...props} />
@@ -73,10 +74,10 @@ const routes = [
 		path: '/players',
 		main: (props: any) => <UserRanks {...props} />
 	},
-	// {
-	// 	path: '/',
-	// 	main: (props: any) => <LandingPage {...props} />
-	// }
+	{
+		path: '/',
+		main: (props: any) => <Landing {...props} />
+	}
 ];
 
 function App() {

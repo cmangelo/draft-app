@@ -1,10 +1,14 @@
 import { FC } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { usernameSelector } from '../../../store/selectors/userSelector';
+import { logoutUser } from '../../../store/slices/userSlice';
 
 export const Sidebar: FC = () => {
-  // const dispatch = useDispatch()
-  const isUserLoggedIn: boolean = true //useSelector(getIsUserLoggedIn)
+  const dispatch = useAppDispatch()
+  const history = useHistory()
+  const isUserLoggedIn = useAppSelector(state => usernameSelector(state));
   const location = useLocation()
   const locationSegments = location.pathname.split('/')
 
@@ -18,10 +22,10 @@ export const Sidebar: FC = () => {
     return locationSegments.some(segment => segment === link)
   }
 
-  // const logoutUser = () => {
-  //   dispatch(logoutUserAction())
-  //   props.history.push('/login')
-  // }
+  const logout = () => {
+    dispatch(logoutUser())
+    history.push('/login')
+  }
 
   return isUserLoggedIn && !inDraft() ? (
     <div className="Sidebar">
@@ -38,10 +42,10 @@ export const Sidebar: FC = () => {
           <FontAwesomeIcon icon="pencil-alt" className="icon" />
           <div>My Ranks</div>
         </Link>
-        {/* <Link to="/login" onClick={logoutUser}>
+        <Link to="/login" onClick={logout}>
           <FontAwesomeIcon icon="sign-out-alt" className="icon" />
           <div>Log Out</div>
-        </Link> */}
+        </Link>
       </nav>
     </div>
   ) : (

@@ -3,6 +3,7 @@ import { createBrowserHistory } from 'history'
 import { connectRouter, routerMiddleware } from 'connected-react-router'
 import draftArenaSlice from '../store/slices/draftArenaSlice'
 import entitySlice from './slices/entitySlice'
+import userSlice from './slices/userSlice'
 
 export const history = createBrowserHistory()
 
@@ -10,6 +11,7 @@ export const store = configureStore({
   reducer: {
     draftArena: draftArenaSlice,
     entity: entitySlice,
+    user: userSlice,
     router: connectRouter(history),
   },
   middleware: getDefaultMiddleware().concat(routerMiddleware(history)),
