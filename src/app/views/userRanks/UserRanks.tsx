@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from 'react'
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd'
 import { PlayerPosition,  Positions } from '../../../models/player'
 import { useAppDispatch, useAppSelector } from '../../../store/hooks'
-import { populatedTierSelector } from '../../../store/selectors/entitySelector'
+import { changesSinceLastSaveSelector, populatedTierSelector } from '../../../store/selectors/entitySelector'
 import { getRanksThunk } from '../../../store/slices/draftArenaSlice'
 import { TierBucket } from '../../components/userRanks/TierBucket'
 import { 
@@ -25,6 +25,7 @@ export const UserRanks: FC = () => {
     [PlayerPosition.TE]: false 
   })
   const rankings = useAppSelector(state => populatedTierSelector(state))
+  const changesSinceLastSave = useAppSelector(state => changesSinceLastSaveSelector(state))
   
   const insertTier = (insertAfter: number) =>
     dispatch(insertTierAction({ position: selectedPosition, insertAfter}))
@@ -86,14 +87,16 @@ export const UserRanks: FC = () => {
   }
 
   const onSaveClick = () => {
-    dispatch(saveRanksThunk())
+    dispatch(saveRanksThunk({position: selectedPosition}))
   }
 
   return (
     <div className="UserRanks">
       <header>
         <GroupSelector groupVisibility={positions} togglePositionVisible={onPositionChange}></GroupSelector>
-        <button onClick={onSaveClick}>Save</button>
+        <button 
+          onClick={onSaveClick}
+          disabled={!changesSinceLastSave[selectedPosition]}>Save</button>
       </header>
       <div className="ranks">
         <DragDropContext onDragEnd={onDragEnd}>

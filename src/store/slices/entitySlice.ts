@@ -3,7 +3,7 @@ import { saveRanks } from '../../clients/proxyClient'
 import { KeyedMap, NumberedMap } from '../../models/common'
 import { Player, PlayerPosition, Positions, Tier } from '../../models/player'
 import { RankItem } from '../../models/ranks'
-import { DeleteTierPayload, InsertTierPayload, UpdatePlayerRankPayload } from '../models/entityActions'
+import { DeleteTierPayload, InsertTierPayload, SaveRanksPayload, UpdatePlayerRankPayload } from '../models/entityActions'
 import { RootState } from '../store'
 import { dequeuePlayer, draftPlayerThunk, getRanksThunk, loadDraftThunk, queuePlayer } from './draftArenaSlice'
 
@@ -12,7 +12,7 @@ type EntityState = {
   tiers: Positions<NumberedMap<Tier>>
   draftedPlayers: KeyedMap<boolean>
   queuedPlayers: KeyedMap<boolean>
-  changeSinceLastSave: boolean
+  changesSinceLastSave: Positions<boolean>
 }
 
 const initialState: EntityState = {
@@ -24,7 +24,12 @@ const initialState: EntityState = {
   },
   draftedPlayers: {},
   queuedPlayers: {},
-  changeSinceLastSave: false
+  changesSinceLastSave: {
+    QB: false,
+    RB: false,
+    WR: false,
+    TE: false,
+  }
 }
 
 const tiersToRankItems = (tiers: NumberedMap<Tier>, position: PlayerPosition) => {
@@ -43,17 +48,15 @@ const tiersToRankItems = (tiers: NumberedMap<Tier>, position: PlayerPosition) =>
     .flat()
 }
 
-export const saveRanksThunk = createAsyncThunk(
+export const saveRanksThunk: any = createAsyncThunk(
   'saveRanks',
-  async (_, { getState }) => {
+  async ({ position }: SaveRanksPayload, { getState }) => {
     const entityState = (getState() as RootState).entity
-    // const qbRanks = tiersToRankItems(entityState.tiers[PlayerPosition.QB], PlayerPosition.QB)
-    // await saveRanks('QB', {ranks: []})
-  },
-  {
-    condition: (_, { getState }) => {
-      console.log(getState())
-      return (getState() as RootState).entity.changeSinceLastSave
+    const ranks = tiersToRankItems(entityState.tiers[position], position)
+    await saveRanks(position, { ranks })
+  }, {
+    condition: ({ position }, { getState }) => {
+      return (getState() as RootState).entity.changesSinceLastSave[position]
     }
   }
 )
@@ -64,7 +67,7 @@ const buildTiers = (players: Player[]) => {
     return acc
   }, {} as KeyedMap<Player>)
 
-  const tierMap = {} as KeyedMap<Tier>
+  const tierMap: NumberedMap<Tier> = {}
 
   players.forEach(player => {
     const tier = tierMap[player.tier] || {
@@ -73,6 +76,10 @@ const buildTiers = (players: Player[]) => {
     } as Tier
     tier.players.push(player.key)
     tierMap[player.tier] = tier
+  })
+
+  Object.keys(tierMap).forEach(tierNumber => {
+    tierMap[+tierNumber].players.sort((a, b) => playerMap[a].rank - playerMap[b].rank)
   })
 
   return { playerMap, tierMap }
@@ -145,7 +152,7 @@ export const entitySlice = createSlice({
         tiers[endTier].players.splice(endIndex, 0, removed)
         tiers[startTier].players.splice(startIndex, 0)
       }
-      state.changeSinceLastSave = true
+      state.changesSinceLastSave[position] = true
     }
   },
   extraReducers: reducer => 
@@ -186,6 +193,10 @@ export const entitySlice = createSlice({
           const pickNumber = parseInt(key)
           state.draftedPlayers[picks[pickNumber]] = true
         })
+      })
+      .addCase(saveRanksThunk.fulfilled, (state, action) => {
+        const { position } = action.meta.arg as SaveRanksPayload
+        state.changesSinceLastSave[position] = false
       })
       .addCase(queuePlayer, (state, action) => {  
         const { playerId } = action.payload

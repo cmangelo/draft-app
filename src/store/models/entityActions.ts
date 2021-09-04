@@ -17,3 +17,7 @@ export type UpdatePlayerRankPayload = {
   startIndex: number
   endIndex: number
 }
+
+export type SaveRanksPayload = {
+  position: PlayerPosition
+}

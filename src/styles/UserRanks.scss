@@ -14,6 +14,10 @@
             color: white;
             background-color: #00b0ff;
             padding: 8px 17px;
+
+            &:disabled {
+                background-color: #e0e0e0;
+            }
         }
     }
 

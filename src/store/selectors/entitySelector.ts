@@ -5,13 +5,14 @@ import { RootState } from '../store'
 
 const entityStateSelector = (state: RootState) => state.entity
 export const playerSelector = createSelector(entityStateSelector, state => state.players)
+export const changesSinceLastSaveSelector = createSelector(entityStateSelector, state => state.changesSinceLastSave)
+const draftedPlayersSelector = createSelector(entityStateSelector, state => state.draftedPlayers)
+const queuedPlayersSelector = createSelector(entityStateSelector, state => state.queuedPlayers)
 
 const qbTierSelector = createSelector(entityStateSelector, state => state.tiers[PlayerPosition.QB])
 const rbTierSelector = createSelector(entityStateSelector, state => state.tiers[PlayerPosition.RB])
 const wrTierSelector = createSelector(entityStateSelector, state => state.tiers[PlayerPosition.WR])
 const teTierSelector = createSelector(entityStateSelector, state => state.tiers[PlayerPosition.TE])
-const draftedPlayersSelector = createSelector(entityStateSelector, state => state.draftedPlayers)
-const queuedPlayersSelector = createSelector(entityStateSelector, state => state.queuedPlayers)
 
 const populateTiers = (
   playerPosition: PlayerPosition,
