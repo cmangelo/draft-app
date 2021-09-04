@@ -9,7 +9,8 @@ import {
   queuePlayer as queuePlayerAction,
   dequeuePlayer as dequeuePlayerAction,
   updateQueueOrder as updateQueueOrderAction,
-  unloadDraft
+  unloadDraft,
+  deleteDraftPickThunk
 } from '../../../store/slices/draftArenaSlice'
 import { DraftToolbar } from '../../components/DraftToolbar'
 import { pickStateSelector, populatedQueueSelector, teamsWithPicksSelector } from '../../../store/selectors/draftArenaSelector'
@@ -43,6 +44,7 @@ export const DraftArena: FC<RouteComponentProps<MatchParams>> = ({
   const draftPlayer = (playerId: string) => dispatch(draftPlayerThunk({ playerId }))
   const queuePlayer = (playerId: string) => dispatch(queuePlayerAction({ playerId }))
   const dequeuePlayer = (playerId: string) => dispatch(dequeuePlayerAction({ playerId }))
+  const undoPick = () => dispatch(deleteDraftPickThunk())
   const updateQueueOrder = (oldIndex: number, newIndex: number) => dispatch(updateQueueOrderAction({ oldIndex, newIndex }))
   const changeRanksView = () => setRanksView(ranksView < RANKS_VIEWS_ORDER.length - 1 ? ranksView + 1 : 0)
   const backButtonClick = () => {
@@ -68,6 +70,7 @@ export const DraftArena: FC<RouteComponentProps<MatchParams>> = ({
           state={draftState} 
           changeRanksView={changeRanksView}
           viewIcon={RANKS_VIEW_ICON[ranksView]}
+          undoPick={undoPick}
         />
         <Rankings 
           draftPlayer={draftPlayer}

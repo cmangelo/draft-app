@@ -48,3 +48,7 @@ export const draftPlayer = (
   }
   return client.post(`/drafts/${draftId}/picks`, request)
 }
+
+export const deleteDraftPick = (draftId: string, pickNumber: number): Promise<AxiosResponse> => {
+  return client.delete(`/drafts/${draftId}/picks/${pickNumber}`)
+}

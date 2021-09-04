@@ -1,10 +1,11 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AxiosResponse } from 'axios'
 import { push } from 'connected-react-router'
-import { createDraft, draftPlayer, getDraftDetails, getDrafts, getRanks } from '../../clients/proxyClient'
+import { createDraft, deleteDraftPick, draftPlayer, getDraftDetails, getDrafts, getRanks } from '../../clients/proxyClient'
 import { CreateDraftRequest, DraftConfig, DraftOrder, DraftPicks, UserDraft } from '../../models/draft'
 import { Player, PlayerPosition, RankingsVersions } from '../../models/player'
 import { 
+  DeleteDraftPickFulfilledPayload,
   DequeuePlayerPayload, 
   DraftPlayerThunkPayload, 
   GetDraftsThunkFulfilledPayload, 
@@ -113,6 +114,16 @@ export const draftPlayerThunk = createAsyncThunk(
   }
 )
 
+export const deleteDraftPickThunk = createAsyncThunk(
+  'deleteDraftPick',
+  async (_, { getState }): Promise<DeleteDraftPickFulfilledPayload> => {
+    const state = getState() as { draftArena: DraftState }
+    const { draftId, pickState, picks } = state.draftArena
+    await deleteDraftPick(draftId, pickState.overall - 1)
+    return { playerId: picks[pickState.overall - 1] }
+  }
+)
+
 export const draftArenaSlice = createSlice({
   name: 'draft',
   initialState,
@@ -171,6 +182,10 @@ export const draftArenaSlice = createSlice({
         state.pickState.currRound = newRound
 
         removePlayerFromQueue(state, playerId)
+      })
+      .addCase(deleteDraftPickThunk.fulfilled, (state, action) => {
+        state.pickState.overall -= 1
+        delete state.picks[state.pickState.overall] 
       })
 })
 

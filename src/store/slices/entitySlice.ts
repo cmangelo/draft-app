@@ -5,7 +5,7 @@ import { Player, PlayerPosition, Positions, Tier } from '../../models/player'
 import { RankItem } from '../../models/ranks'
 import { DeleteTierPayload, InsertTierPayload, SaveRanksPayload, UpdatePlayerRankPayload } from '../models/entityActions'
 import { RootState } from '../store'
-import { dequeuePlayer, draftPlayerThunk, getRanksThunk, loadDraftThunk, queuePlayer } from './draftArenaSlice'
+import { deleteDraftPickThunk, dequeuePlayer, draftPlayerThunk, getRanksThunk, loadDraftThunk, queuePlayer, unloadDraft } from './draftArenaSlice'
 
 type EntityState = {
   players?: KeyedMap<Player>
@@ -205,6 +205,14 @@ export const entitySlice = createSlice({
       .addCase(dequeuePlayer, (state, action) => {
         const { playerId } = action.payload
         delete state.queuedPlayers[playerId]
+      })
+      .addCase(unloadDraft, (state) => {
+        state.queuedPlayers = {}
+        state.draftedPlayers = {}
+      })
+      .addCase(deleteDraftPickThunk.fulfilled, (state, action) => {
+        const { playerId } = action.payload
+        delete state.draftedPlayers[playerId]
       })
 })
 

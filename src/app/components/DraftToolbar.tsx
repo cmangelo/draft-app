@@ -4,14 +4,16 @@ import { PickState } from '../../store/slices/draftArenaSlice'
 
 type DraftToolbarProps = {
   state: PickState
-  changeRanksView: () => void
   viewIcon: string
+  changeRanksView: () => void
+  undoPick: () => void
 }
 
 export const DraftToolbar: FC<DraftToolbarProps> = ({
   state,
   changeRanksView,
-  viewIcon
+  viewIcon,
+  undoPick
 }) => {
   const {
     overall,
@@ -28,6 +30,10 @@ export const DraftToolbar: FC<DraftToolbarProps> = ({
           <p><span>Round </span>{currRound}</p>
           <p><span>Pick </span>{roundPick}</p>
         </div>
+        {
+          overall > 1 &&
+          <button className="undo-button" onClick={undoPick}>Undo Pick</button>
+        }
         {/* className={`icon ${!dropdownClosed ? 'flip' : ''}`}  */}
       </div>
       <div className="icon-container" onClick={changeRanksView}>

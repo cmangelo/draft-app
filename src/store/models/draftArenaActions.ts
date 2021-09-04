@@ -25,3 +25,7 @@ export type GetRanksThunkFulfilledPayload = Positions<Player[]>
 export type DraftPlayerThunkPayload = {
   playerId: string
 }
+
+export type DeleteDraftPickFulfilledPayload = {
+  playerId: string
+}
